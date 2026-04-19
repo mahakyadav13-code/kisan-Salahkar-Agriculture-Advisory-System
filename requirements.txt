@@ -8,3 +8,4 @@ Pillow>=10.0.0
 bcrypt>=4.0.0
 bleach>=6.0.0
 gunicorn
+google-generativeai
