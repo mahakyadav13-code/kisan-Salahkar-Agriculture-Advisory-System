@@ -4477,6 +4477,7 @@ def api_global_search():
 if __name__ == "__main__":
     init_db()
     # Try to init Gemini at startup if key is set
-    if GEMINI_API_KEY:
+    if GEMINI_API_KEY in os.environ:
         _init_gemini()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port=int(os.environ.get("PORT", 10000))
+    app.run(debug=True, host="0.0.0.0", port=port)
