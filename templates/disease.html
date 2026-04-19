@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Disease Detection — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<section class="hero-crop-v2 hero-disease">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Disease Detection</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#ef4444,#f97316);"><i class="fa-solid fa-virus"></i></div>
+        <h1><span data-i18n="diseaseTitle">Crop Disease Detection</span></h1>
+        <p data-i18n="diseaseSub">Describe symptoms or upload a leaf photo to diagnose crop diseases</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-robot"></i> <span data-i18n="disStat1">AI Powered</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-seedling"></i> <span data-i18n="disStat2">12+ Crops</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-microphone"></i> <span data-i18n="disStat3">Voice Input</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-camera"></i> <span data-i18n="disStat4">Photo Scan</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="crop-layout">
+        <!-- Input Form -->
+        <div class="crop-form-card">
+            <h2><i class="fa-solid fa-stethoscope"></i> <span data-i18n="diseaseFormTitle">Describe the Problem</span></h2>
+            <form id="diseaseForm">
+                <div class="input-group">
+                    <label data-i18n="diseaseCrop">Select Crop</label>
+                    <select id="diseaseCrop">
+                        <option value="">Any Crop</option>
+                        <option value="Rice">Rice (धान)</option>
+                        <option value="Wheat">Wheat (गेहूँ)</option>
+                        <option value="Maize">Maize (मक्का)</option>
+                        <option value="Cotton">Cotton (कपास)</option>
+                        <option value="Potato">Potato (आलू)</option>
+                        <option value="Tomato">Tomato (टमाटर)</option>
+                        <option value="Onion">Onion (प्याज़)</option>
+                        <option value="Chili">Chili (मिर्च)</option>
+                        <option value="Banana">Banana (केला)</option>
+                        <option value="Mango">Mango (आम)</option>
+                        <option value="Soybean">Soybean (सोयाबीन)</option>
+                        <option value="Sugarcane">Sugarcane (गन्ना)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="diseaseSymptoms">Describe Symptoms</label>
+                    <textarea id="diseaseSymptoms" rows="4" placeholder="E.g. Yellow spots on leaves, wilting, white powder on stems..."></textarea>
+                </div>
+
+                <!-- Voice input for symptoms -->
+                <button type="button" class="btn btn-voice-sm" onclick="voiceDiseaseInput()" style="margin-bottom:1rem;">
+                    <i class="fa-solid fa-microphone"></i> <span data-i18n="voiceDescribe">Describe by Voice</span>
+                </button>
+
+                <!-- Image Upload -->
+                <div class="image-upload-area" id="imageUpload">
+                    <i class="fa-solid fa-camera"></i>
+                    <p data-i18n="diseaseUpload">Upload leaf/plant photo (optional)</p>
+                    <input type="file" id="diseaseImage" accept="image/*" capture="environment">
+                    <div id="imagePreview" style="display:none;margin-top:1rem;">
+                        <img id="previewImg" style="max-width:200px;border-radius:10px;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="diagnoseBtn">
+                    <i class="fa-solid fa-stethoscope"></i> <span data-i18n="diseaseDetect">Diagnose Disease</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Results -->
+        <div class="crop-result-card" id="diseaseResult" style="display:none;">
+            <h2><i class="fa-solid fa-notes-medical"></i> <span data-i18n="diseaseResultTitle">Diagnosis Results</span></h2>
+            <div id="diseaseResults"></div>
+
+            <!-- TTS for diagnosis -->
+            <button class="btn btn-voice-sm" id="speakDiagnosis" style="margin-top:1rem;">
+                <i class="fa-solid fa-volume-high"></i> <span data-i18n="listenDiagnosis">Listen to Diagnosis</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Prevention Tips & Common Diseases (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-green">
+        <i class="fa-solid fa-shield-virus"></i>
+        <div><strong data-i18n="disPreventTitle">Prevention is Better than Cure:</strong> <span data-i18n="disPreventDesc">Inspect crops weekly, remove infected leaves immediately, and maintain proper spacing between plants for air circulation. Neem oil spray every 15 days prevents 80% of common pests.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-virus-slash"></i>
+        <h3 data-i18n="disCommonTitle">Common Crop Diseases in India</h3>
+        <small data-i18n="disCommonSub">Quick reference guide</small>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef2f2; color:#991b1b;"><i class="fa-solid fa-virus"></i></div>
+            <h4 data-i18n="disBlastTitle">Blast (Rice/Wheat)</h4>
+            <p data-i18n="disBlastDesc">Diamond-shaped brown spots on leaves. Use Tricyclazole fungicide. Avoid excess nitrogen. Resistant varieties: Pusa-1121, IR-64.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fefce8; color:#854d0e;"><i class="fa-solid fa-leaf"></i></div>
+            <h4 data-i18n="disBlightTitle">Late Blight (Potato/Tomato)</h4>
+            <p data-i18n="disBlightDesc">Dark water-soaked spots on leaves &amp; stems. Spray Mancozeb before monsoon. Use certified disease-free seeds.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fdf4ff; color:#86198f;"><i class="fa-solid fa-bug"></i></div>
+            <h4 data-i18n="disBollTitle">Bollworm (Cotton)</h4>
+            <p data-i18n="disBollDesc">Bores into cotton bolls causing yield loss. Use Bt cotton varieties. Install pheromone traps. Spray NPV solution for organic control.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#ecfdf5; color:#065f46;"><i class="fa-solid fa-seedling"></i></div>
+            <h4 data-i18n="disWiltTitle">Wilt (Multiple Crops)</h4>
+            <p data-i18n="disWiltDesc">Plants suddenly droop despite watering. Caused by Fusarium fungus. Treat soil with Trichoderma. Rotate crops every season.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

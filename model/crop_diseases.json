@@ -1,0 +1,42 @@
+{
+  "Bajra": [
+    "Downy Mildew",
+    "Ergot",
+    "Smut"
+  ],
+  "Chickpea": [
+    "Fusarium Wilt",
+    "Ascochyta Blight",
+    "Pod Borer"
+  ],
+  "Coffee": [
+    "Coffee Rust",
+    "Berry Disease",
+    "Black Rot"
+  ],
+  "Cotton": [
+    "Bollworm",
+    "Whitefly",
+    "Bacterial Blight"
+  ],
+  "Jute": [
+    "Stem Rot",
+    "Root Rot",
+    "Anthracnose"
+  ],
+  "Lentil": [
+    "Rust",
+    "Wilt",
+    "Ascochyta Blight"
+  ],
+  "Maize": [
+    "Leaf Blight",
+    "Stalk Rot",
+    "Downy Mildew"
+  ],
+  "Rice": [
+    "Blast",
+    "Brown Spot",
+    "Bacterial Leaf Blight"
+  ]
+}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}Mandi Prices — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<section class="hero-crop-v2 hero-mandi">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Mandi Prices</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#f59e0b,#ef4444);"><i class="fa-solid fa-store"></i></div>
+        <h1><span data-i18n="mandiTitle">Mandi Prices &amp; MSP</span></h1>
+        <p data-i18n="mandiSub">Live market prices from Government of India (data.gov.in — Agmarknet)</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-signal"></i> <span data-i18n="mndiStat1">Live Prices</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-shop"></i> <span data-i18n="mndiStat2">500+ Mandis</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-wheat-awn"></i> <span data-i18n="mndiStat3">25+ Crops</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-landmark"></i> <span data-i18n="mndiStat4">Govt Data</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+
+    <!-- ── Status bar ───────────────────────────── -->
+    <div class="mandi-status-bar" id="mandiStatusBar">
+        <span id="mandiBadge" class="badge badge-outline">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Loading…
+        </span>
+        <span id="mandiFetchedAt" class="mandi-fetched-at"></span>
+        <button type="button" class="btn btn-sm btn-outline" id="mandiRefreshBtn" title="Refresh prices">
+            <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="mandiRefresh">Refresh</span>
+        </button>
+    </div>
+
+    <!-- ── Nearby / Auto-detect location ─────── -->
+    <div class="mandi-nearby-card" id="mandiNearbyCard">
+        <div class="mandi-nearby-header">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <h3 data-i18n="mandiNearbyTitle">Your Nearby Mandis</h3>
+            <button type="button" class="btn btn-sm btn-outline" id="mandiDetectBtn">
+                <i class="fa-solid fa-location-dot"></i> <span data-i18n="mandiDetect">Detect Location</span>
+            </button>
+        </div>
+        <div id="mandiNearbyStatus" class="mandi-nearby-status">
+            <span class="text-muted" data-i18n="mandiNearbyHint">Click "Detect Location" to see prices from your nearest mandis</span>
+        </div>
+        <div id="mandiNearbyResults" class="mandi-nearby-results" style="display:none;"></div>
+    </div>
+
+    <!-- ── Favorite Mandis ──────────────────────── -->
+    <div class="mandi-favorites-card" id="mandiFavoritesCard">
+        <div class="mandi-fav-header">
+            <i class="fa-solid fa-star" style="color:#f59e0b;"></i>
+            <h3 data-i18n="mandiFavTitle">My Saved Mandis</h3>
+        </div>
+        <div id="mandiFavList" class="mandi-fav-list">
+            <span class="text-muted" data-i18n="mandiFavEmpty">No saved mandis yet. Search and star a mandi below to save it.</span>
+        </div>
+    </div>
+
+    <!-- ── Drill-down search: State → District → Mandi → Crop ── -->
+    <div class="mandi-search-card">
+        <h3><i class="fa-solid fa-filter"></i> <span data-i18n="mandiFilterTitle">Search by Location & Crop</span></h3>
+        <form id="mandiForm" class="mandi-filter-form">
+            <div class="mandi-filter-row">
+                <div class="mandi-filter-col">
+                    <label data-i18n="mandiLblState">State</label>
+                    <select id="mandiState">
+                        <option value="" data-i18n="mandiSelectState">-- All States --</option>
+                    </select>
+                </div>
+                <div class="mandi-filter-col">
+                    <label data-i18n="mandiLblDistrict">District</label>
+                    <select id="mandiDistrict" disabled>
+                        <option value="" data-i18n="mandiSelectDistrict">-- Select State First --</option>
+                    </select>
+                </div>
+                <div class="mandi-filter-col">
+                    <label data-i18n="mandiLblMarket">Mandi / Market</label>
+                    <select id="mandiMarket" disabled>
+                        <option value="" data-i18n="mandiSelectMarket">-- Select District First --</option>
+                    </select>
+                </div>
+                <div class="mandi-filter-col">
+                    <label data-i18n="mandiLblCrop">Crop (optional)</label>
+                    <select id="mandiCrop">
+                        <option value="" data-i18n="mandiSelectCrop">-- All Crops --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mandi-filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="mandiSearch">Search Prices</span>
+                </button>
+                <button type="button" class="btn btn-outline" id="mandiClearBtn">
+                    <i class="fa-solid fa-xmark"></i> <span data-i18n="mandiClear">Clear</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading -->
+    <div id="mandiLoading" class="loading-box" style="display:none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ── Crop Detail Results ─────────────────── -->
+    <div id="mandiDetail" style="display:none;">
+        <!-- Price Summary Cards -->
+        <div class="mandi-summary-row">
+            <div class="mandi-stat-card mandi-stat-msp">
+                <div class="mandi-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="mandi-stat-body">
+                    <span class="mandi-stat-label" data-i18n="mandiMSPLabel">MSP</span>
+                    <span class="mandi-stat-value" id="mandiMSP">₹--</span>
+                </div>
+            </div>
+            <div class="mandi-stat-card mandi-stat-avg">
+                <div class="mandi-stat-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="mandi-stat-body">
+                    <span class="mandi-stat-label" data-i18n="mandiAvgLabel">Avg. Price</span>
+                    <span class="mandi-stat-value" id="mandiAvgPrice">₹--</span>
+                </div>
+            </div>
+            <div class="mandi-stat-card mandi-stat-min">
+                <div class="mandi-stat-icon"><i class="fa-solid fa-arrow-down"></i></div>
+                <div class="mandi-stat-body">
+                    <span class="mandi-stat-label" data-i18n="mandiMinLabel">Lowest</span>
+                    <span class="mandi-stat-value" id="mandiMinPrice">₹--</span>
+                </div>
+            </div>
+            <div class="mandi-stat-card mandi-stat-max">
+                <div class="mandi-stat-icon"><i class="fa-solid fa-arrow-up"></i></div>
+                <div class="mandi-stat-body">
+                    <span class="mandi-stat-label" data-i18n="mandiMaxLabel">Highest</span>
+                    <span class="mandi-stat-value" id="mandiMaxPrice">₹--</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="mandiDetailHeader" class="mandi-detail-header">
+            <h2 id="mandiDetailTitle" class="section-title"></h2>
+            <span id="mandiTotalRecords" class="mandi-records-badge"></span>
+        </div>
+
+        <div id="mandiPrices" class="mandi-cards-grid"></div>
+    </div>
+
+    <!-- ── All Crops Overview Table ──────────── -->
+    <h2 class="section-title" data-i18n="mandiOverview">All Crop Prices Overview</h2>
+    <div id="mandiAllCrops" class="mandi-table-wrap">
+        <table class="mandi-table">
+            <thead>
+                <tr>
+                    <th data-i18n="mandiCropCol">Crop</th>
+                    <th data-i18n="mandiMSPCol">MSP (₹/qtl)</th>
+                    <th data-i18n="mandiAvgCol">Avg. Mandi (₹/qtl)</th>
+                    <th data-i18n="mandiMandisCol">Mandis</th>
+                    <th data-i18n="mandiTrendCol">vs MSP</th>
+                </tr>
+            </thead>
+            <tbody id="mandiTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- API attribution -->
+    <div class="mandi-attribution">
+        <i class="fa-solid fa-database"></i>
+        <span data-i18n="mandiSourceLabel">Data source:</span>
+        <a href="https://data.gov.in" target="_blank" rel="noopener">data.gov.in</a>
+        <span>— Agmarknet (Agricultural Marketing Information Network), Govt. of India</span>
+    </div>
+</section>
+
+<!-- Selling Tips (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-amber">
+        <i class="fa-solid fa-coins"></i>
+        <div><strong data-i18n="mndiTipTitle">Smart Selling Tips:</strong> <span data-i18n="mndiTipDesc">Compare prices across 3-4 nearby mandis before selling. Avoid selling on peak arrival days (Mondays) — mid-week usually fetches 5-10% better prices.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-chart-line"></i>
+        <h3 data-i18n="mndiInsightTitle">Market Insights for Farmers</h3>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            <h4 data-i18n="mndiMSPvsMandi">MSP vs Mandi</h4>
+            <p data-i18n="mndiMSPvsMandiDesc">Always compare your mandi price with MSP. If mandi price is below MSP, you can sell directly to government procurement centers.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-warehouse"></i></div>
+            <h4 data-i18n="mndiStorageTitle">Storage Tips</h4>
+            <p data-i18n="mndiStorageDesc">If prices are low, consider storing grain in a government warehouse (under WDRA scheme) and wait for better prices. Storage cost is ₹4-6/quintal/month.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <h4 data-i18n="mndiENAMTitle">e-NAM Trading</h4>
+            <p data-i18n="mndiENAMDesc">Register on <a href="https://enam.gov.in" target="_blank" rel="noopener">e-NAM portal</a> to sell crops to buyers across India — get better prices through competitive bidding.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

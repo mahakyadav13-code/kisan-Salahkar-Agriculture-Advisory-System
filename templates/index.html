@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Kisan Salahkar — Login{% endblock %}
+
+{% block nav %}
+<!-- minimal nav on login page -->
+<a href="/" class="nav-link-item"><i class="fa-solid fa-house"></i> <span data-i18n="navHome">Home</span></a>
+<button class="lang-toggle" title="Switch language">
+    <i class="fa-solid fa-language"></i>
+    <span class="lang-toggle-text">हिंदी</span>
+</button>
+{% endblock %}
+
+{% block content %}
+<section class="auth-page-new">
+
+    <!-- Left — Branding panel with real farming image -->
+    <div class="auth-brand-panel">
+        <div class="auth-brand-bg-image"></div>
+        <div class="auth-brand-inner">
+            <div class="auth-brand-logo">
+                <i class="fa-solid fa-wheat-awn"></i>
+            </div>
+            <h1 data-i18n="authTitle">Kisan Salahkar</h1>
+            <p class="auth-brand-hindi">किसान सलाहकार — स्मार्ट कृषि सलाह मंच</p>
+            <p class="auth-brand-tagline" data-i18n="authSubtitle">AI-Powered Smart Agriculture Advisory Platform</p>
+
+            <div class="auth-highlights">
+                <div class="auth-highlight-item">
+                    <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=48&h=48&fit=crop" alt="" class="auth-feature-img">
+                    <span data-i18n="authFeat1">AI-powered Crop Recommendations</span>
+                </div>
+                <div class="auth-highlight-item">
+                    <img src="https://images.unsplash.com/photo-1504386106331-3e4e71712b38?w=48&h=48&fit=crop" alt="" class="auth-feature-img">
+                    <span data-i18n="authFeat2">Real-time Weather Forecasts</span>
+                </div>
+                <div class="auth-highlight-item">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=48&h=48&fit=crop" alt="" class="auth-feature-img">
+                    <span data-i18n="authFeat5">Live Mandi Prices & MSP</span>
+                </div>
+                <div class="auth-highlight-item">
+                    <img src="https://images.unsplash.com/photo-1589923188651-268a9765e432?w=48&h=48&fit=crop" alt="" class="auth-feature-img">
+                    <span data-i18n="authFeat3">Government Scheme Eligibility</span>
+                </div>
+                <div class="auth-highlight-item">
+                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=48&h=48&fit=crop" alt="" class="auth-feature-img">
+                    <span data-i18n="authFeat6">Crop Disease Diagnosis</span>
+                </div>
+                <div class="auth-highlight-item">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <span data-i18n="authFeat4">100% Free for All Farmers</span>
+                </div>
+            </div>
+
+            <div class="auth-govt-badges">
+                <div class="auth-govt-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span data-i18n="authBadge1">100% Secure & Free</span>
+                </div>
+                <div class="auth-govt-badge">
+                    <i class="fa-solid fa-users"></i>
+                    <span data-i18n="authBadge2">Made for Indian Farmers</span>
+                </div>
+            </div>
+
+            <div class="auth-brand-footer">
+                <i class="fa-solid fa-code"></i> <span data-i18n="authDevCredit">Developed by <strong>Mahak Yadav</strong> — IILM University</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right — Form panel -->
+    <div class="auth-form-panel">
+        <div class="auth-card-new">
+            <!-- Header -->
+            <div class="auth-card-header">
+                <div class="auth-avatar">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h2 data-i18n="authWelcome">Welcome Back</h2>
+                <p data-i18n="authWelcomeSub">Sign in to access your farming tools</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" data-i18n="tabLogin">Login</button>
+                <button class="auth-tab" data-tab="signup" data-i18n="tabSignup">Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="auth-form active">
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="loginUsername" data-i18n="phUsername" placeholder="Username" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" data-i18n="phPassword" placeholder="Password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="btnLogin">Login</span>
+                </button>
+            </form>
+
+            <!-- SIGNUP FORM -->
+            <form id="signupForm" class="auth-form">
+                <div class="auth-form-row">
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <input type="text" id="signupName" data-i18n="phName" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <input type="text" id="signupUsername" data-i18n="phUsername" placeholder="Username" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="signupPassword" data-i18n="phPassword" placeholder="Password" required autocomplete="new-password">
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" id="signupPhone" placeholder="Phone (optional)" data-i18n="phPhone">
+                </div>
+
+                <!-- Location section -->
+                <div class="auth-location-section">
+                    <p class="auth-location-label"><i class="fa-solid fa-location-dot"></i> <span data-i18n="authLocationLabel">Your Location</span> <small data-i18n="authLocationHint">(auto-fills weather & search)</small></p>
+                    <div class="auth-form-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-city"></i>
+                            <input type="text" id="signupCity" placeholder="City / District" data-i18n="phCity" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <select id="signupState">
+                                <option value="" data-i18n="phState">-- Select State --</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Odisha">Odisha</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-user-plus"></i> <span data-i18n="btnSignup">Create Account</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</section>
+{% endblock %}

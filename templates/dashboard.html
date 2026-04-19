@@ -1,0 +1,941 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Kisan Salahkar{% endblock %}
+
+{% block content %}
+
+<!-- ── Full-width Image Banner Slideshow ── -->
+<section class="home-banner-slider" id="bannerSlider">
+    <div class="banner-slides">
+        <div class="banner-slide active">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&h=500&fit=crop&crop=center" alt="Golden wheat fields at sunrise">
+            <div class="banner-slide-overlay"></div>
+            <div class="banner-slide-content">
+                <span class="banner-tag"><i class="fa-solid fa-wheat-awn"></i> Smart Agriculture</span>
+                <h2 data-i18n="dashBanner1Title">AI-Powered Crop Recommendations</h2>
+                <p data-i18n="dashBanner1Desc">Get personalized crop advice based on your soil, weather &amp; location data</p>
+                <a href="/crop" class="btn btn-primary"><i class="fa-solid fa-seedling"></i> <span data-i18n="dashBanner1Btn">Get Started</span></a>
+            </div>
+        </div>
+        <div class="banner-slide">
+            <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600&h=500&fit=crop" alt="Lush green farm landscape">
+            <div class="banner-slide-overlay"></div>
+            <div class="banner-slide-content">
+                <span class="banner-tag"><i class="fa-solid fa-cloud-sun-rain"></i> Live Updates</span>
+                <h2 data-i18n="dashBanner2Title">Real-Time Weather &amp; Mandi Prices</h2>
+                <p data-i18n="dashBanner2Desc">Stay informed with accurate weather forecasts and latest market rates</p>
+                <a href="/weather" class="btn btn-secondary"><i class="fa-solid fa-cloud-bolt"></i> <span data-i18n="dashBanner2Btn">Check Weather</span></a>
+            </div>
+        </div>
+        <div class="banner-slide">
+            <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1600&h=500&fit=crop" alt="Farmer in rice paddy field">
+            <div class="banner-slide-overlay"></div>
+            <div class="banner-slide-content">
+                <span class="banner-tag"><i class="fa-solid fa-landmark"></i> Government Schemes</span>
+                <h2 data-i18n="dashBanner3Title">Check Your Eligibility for PM-KISAN &amp; More</h2>
+                <p data-i18n="dashBanner3Desc">Explore PM-KISAN, PMFBY, Kisan Credit Card and other schemes</p>
+                <a href="/schemes" class="btn btn-primary"><i class="fa-solid fa-landmark"></i> <span data-i18n="dashBanner3Btn">View Schemes</span></a>
+            </div>
+        </div>
+    </div>
+    <button class="banner-arrow banner-prev" onclick="slideBanner(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="banner-arrow banner-next" onclick="slideBanner(1)"><i class="fa-solid fa-chevron-right"></i></button>
+    <div class="banner-dots" id="bannerDots">
+        <span class="banner-dot active" onclick="goToSlide(0)"></span>
+        <span class="banner-dot" onclick="goToSlide(1)"></span>
+        <span class="banner-dot" onclick="goToSlide(2)"></span>
+    </div>
+</section>
+
+
+
+<!-- ── Compact Welcome Hero ── -->
+<section class="dash-hero">
+    <div class="dash-hero-bg"></div>
+    <div class="dash-hero-inner">
+        <div class="dash-hero-text">
+            <h1><span data-i18n="dashGreet">Namaste</span>, {{ user.name }}! 🙏</h1>
+            <p data-i18n="dashSubtitle">Your smart farming companion — get crop advice, weather updates &amp; more.</p>
+            <span class="app-version-badge">v1.0 — April 2026</span>
+        </div>
+        <button class="btn btn-voice" id="voiceBtn" onclick="startVoiceInput()" title="Speak your query">
+            <i class="fa-solid fa-microphone"></i> <span data-i18n="voiceBtn">Speak</span>
+        </button>
+    </div>
+    <div id="voiceResult" class="voice-result" style="display:none;"></div>
+
+    <!-- Inline Stats Strip — Tricolor accents -->
+    <div class="dash-stats-strip">
+        <div class="strip-stat tricolor-saffron"><i class="fa-solid fa-wheat-awn"></i> <strong>23</strong> <span data-i18n="statCrops">Crops</span></div>
+        <div class="strip-stat tricolor-saffron"><i class="fa-solid fa-brain"></i> <strong>AI</strong> <span data-i18n="statAI">Prediction</span></div>
+        <div class="strip-stat tricolor-white"><i class="fa-solid fa-cloud-bolt"></i> <strong>Live</strong> <span data-i18n="statWeather">Weather</span></div>
+        <div class="strip-stat tricolor-white"><i class="fa-solid fa-store"></i> <strong>15+</strong> <span data-i18n="statMandi">Mandis</span></div>
+        <div class="strip-stat tricolor-green"><i class="fa-solid fa-landmark"></i> <strong>8</strong> <span data-i18n="statSchemes">Schemes</span></div>
+        <div class="strip-stat tricolor-green"><i class="fa-solid fa-hand-holding-heart"></i> <strong>Free</strong> <span data-i18n="statFree">For All</span></div>
+    </div>
+</section>
+
+<!-- ── Tip of the Day ── -->
+<section class="section" style="padding-bottom:0;">
+    <div class="tip-of-day">
+        <div class="tip-of-day-icon"><i class="fa-solid fa-lightbulb"></i></div>
+        <div>
+            <h4 data-i18n="tipTitle">💡 Today's Farming Tip</h4>
+            <p id="dailyTip">Water your crops early in the morning (before 8 AM) to reduce evaporation loss by up to 30%. This helps conserve water and ensures better root absorption.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══ Daily Farm Briefing Card ══ -->
+<section class="section" id="briefing" style="padding-bottom:0;">
+    <div class="briefing-card" id="briefingCard">
+        <div class="briefing-card-header">
+            <div class="briefing-header-left">
+                <div class="briefing-icon-wrap"><i class="fa-solid fa-sun"></i></div>
+                <div>
+                    <h3 data-i18n="briefingTitle">🌅 Daily Farm Briefing</h3>
+                    <small data-i18n="briefingSub">AI-generated personalised morning report</small>
+                </div>
+            </div>
+            <div class="briefing-header-actions">
+                <button class="btn btn-sm btn-briefing-speak" id="briefingSpeakBtn" title="Listen to briefing" style="display:none;">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <button class="btn btn-sm btn-briefing-refresh" id="briefingRefreshBtn" title="Generate new briefing">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
+        </div>
+        <div class="briefing-content" id="briefingContent">
+            <div class="briefing-placeholder">
+                <i class="fa-solid fa-wand-magic-sparkles briefing-placeholder-icon"></i>
+                <p data-i18n="briefingPlaceholder">Click below to generate your personalised farm briefing</p>
+                <button class="btn btn-primary btn-briefing-generate" id="briefingGenerateBtn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="briefingGenerate">Generate My Briefing</span>
+                </button>
+            </div>
+        </div>
+        <div class="briefing-footer" id="briefingFooter" style="display:none;">
+            <div class="briefing-data-pills" id="briefingPills"></div>
+            <small class="briefing-time" id="briefingTime"></small>
+        </div>
+    </div>
+</section>
+
+<!-- ══ Voice Command Bar ══ -->
+<section class="section" style="padding-bottom:0;">
+    <div class="voice-command-bar" id="voiceCommandBar">
+        <div class="voice-bar-left">
+            <button class="voice-bar-mic" id="voiceBarMic" title="Voice command">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <div class="voice-bar-text">
+                <span class="voice-bar-label" data-i18n="voiceBarLabel">Voice Command</span>
+                <span class="voice-bar-hint" id="voiceBarHint" data-i18n="voiceBarHint">Try: "Mausam kaisa hai" or "Sensor data dikhao"</span>
+            </div>
+        </div>
+        <div class="voice-bar-status" id="voiceBarStatus"></div>
+    </div>
+</section>
+
+<!-- ── Brand Identity Banner ── -->
+<section class="section" style="padding-top:.5rem; padding-bottom:0;">
+    <div class="brand-identity-banner">
+        <div class="brand-id-logo">
+            <svg width="52" height="52" viewBox="0 0 64 64" fill="none">
+                <rect width="64" height="64" rx="14" fill="#15803d"/>
+                <path d="M32 12c0 0-4 8-4 16s4 20 4 20" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+                <path d="M28 28c-6-4-12-2-12-2s4 6 10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M36 24c6-4 12-2 12-2s-4 6-10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M30 20c-5-5-11-4-11-4s3 6 9 7" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M34 16c4-6 10-6 10-6s-2 7-8 8" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <circle cx="32" cy="11" r="2.5" fill="#fbbf24"/>
+                <circle cx="30" cy="13" r="1.5" fill="#fbbf24" opacity=".7"/>
+                <circle cx="34" cy="13" r="1.5" fill="#fbbf24" opacity=".7"/>
+            </svg>
+        </div>
+        <div class="brand-id-content">
+            <h3 class="brand-id-title">Kisan Salahkar <span class="brand-id-hindi">किसान सलाहकार</span></h3>
+            <p class="brand-id-tagline">India's AI-powered farming companion — Free crop advice, live weather, mandi prices &amp; government schemes in Hindi &amp; English.</p>
+            <div class="brand-id-badges">
+                <span class="brand-badge"><i class="fa-solid fa-robot"></i> AI Powered</span>
+                <span class="brand-badge"><i class="fa-solid fa-language"></i> Bilingual</span>
+                <span class="brand-badge"><i class="fa-solid fa-indian-rupee-sign"></i> 100% Free</span>
+                <span class="brand-badge"><i class="fa-solid fa-shield-halved"></i> Govt. Data</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Core Features Grid with Farming Images ── -->
+<section class="core-features-section">
+    <h2 class="section-title" data-i18n="dashCoreTitle">Explore Our Features</h2>
+    <p class="core-features-subtitle" data-i18n="dashCoreSub">Everything you need for smart farming — powered by AI, real-time data &amp; government resources.</p>
+
+    <div class="core-features-grid">
+
+        <!-- Crop Recommendation -->
+        <a href="/crop" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=640&h=360&fit=crop" alt="Wheat fields" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-brain"></i> AI Powered</span>
+                <div class="core-card-icon core-icon-crop"><i class="fa-solid fa-seedling"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreCrop">Crop Recommendation</h3>
+                <p data-i18n="dashCoreCropDesc">Get AI-powered crop suggestions based on your soil, weather &amp; location for maximum yield.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Weather Forecast -->
+        <a href="/weather" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1504386106331-3e4e71712b38?w=640&h=360&fit=crop" alt="Farm weather" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-satellite-dish"></i> Live Data</span>
+                <div class="core-card-icon core-icon-weather"><i class="fa-solid fa-cloud-sun"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreWeather">Weather Forecast</h3>
+                <p data-i18n="dashCoreWeatherDesc">Real-time weather updates with 5-day forecasts and farming impact advisories.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Disease Detection -->
+        <a href="/disease" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=640&h=360&fit=crop" alt="Plant disease" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-camera"></i> Image AI</span>
+                <div class="core-card-icon core-icon-disease"><i class="fa-solid fa-virus"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreDisease">Disease Detection</h3>
+                <p data-i18n="dashCoreDiseaseDesc">Upload crop photos for instant AI disease diagnosis with treatment suggestions.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Mandi Prices -->
+        <a href="/mandi" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=640&h=360&fit=crop" alt="Vegetable market" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-chart-line"></i> Live Prices</span>
+                <div class="core-card-icon core-icon-mandi"><i class="fa-solid fa-store"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreMandi">Mandi Prices</h3>
+                <p data-i18n="dashCoreMandiDesc">Live market prices from Agmarknet with MSP comparison and price trend analytics.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Soil Testing -->
+        <a href="/soil" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=640&h=360&fit=crop" alt="Soil testing" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-flask-vial"></i> Analysis</span>
+                <div class="core-card-icon core-icon-soil"><i class="fa-solid fa-flask-vial"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreSoil">Soil Testing</h3>
+                <p data-i18n="dashCoreSoilDesc">Enter your soil test values and receive nutrient analysis with fertilizer recommendations.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Govt Schemes -->
+        <a href="/schemes" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1589923188651-268a9765e432?w=640&h=360&fit=crop" alt="Government schemes" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-landmark"></i> Govt. Data</span>
+                <div class="core-card-icon core-icon-schemes"><i class="fa-solid fa-landmark"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreSchemes">Government Schemes</h3>
+                <p data-i18n="dashCoreSchemesDesc">Check eligibility for PM-KISAN, PMFBY, KCC and other welfare schemes for farmers.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Marketplace -->
+        <a href="/marketplace" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1595855759920-86582396756a?w=640&h=360&fit=crop" alt="Farm marketplace" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-handshake"></i> Direct Trade</span>
+                <div class="core-card-icon core-icon-market"><i class="fa-solid fa-handshake"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreMarket">Marketplace</h3>
+                <p data-i18n="dashCoreMarketDesc">Buy &amp; sell crops directly — AI-matched buyers, price suggestions &amp; secure deals.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- Forum -->
+        <a href="/forum" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=640&h=360&fit=crop" alt="Farming community" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-users"></i> Community</span>
+                <div class="core-card-icon core-icon-forum"><i class="fa-solid fa-comments"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreForum">Farmer Forum</h3>
+                <p data-i18n="dashCoreForumDesc">Join discussions with fellow farmers — share tips, ask questions &amp; learn together.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- IoT Sensors -->
+        <a href="/iot" class="core-card">
+            <div class="core-card-img-wrap">
+                <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=640&h=360&fit=crop" alt="IoT sensors farm" class="core-card-img" loading="lazy">
+                <div class="core-card-img-overlay"></div>
+                <span class="core-card-badge"><i class="fa-solid fa-microchip"></i> Smart Farm</span>
+                <div class="core-card-icon core-icon-iot"><i class="fa-solid fa-microchip"></i></div>
+            </div>
+            <div class="core-card-body">
+                <h3 data-i18n="dashCoreIoT">IoT Sensors</h3>
+                <p data-i18n="dashCoreIoTDesc">Monitor temperature, humidity, soil moisture &amp; pH with ESP32 sensors in real-time.</p>
+                <span class="core-card-link" data-i18n="dashCoreExplore">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+    </div>
+</section>
+<div class="section" style="padding-bottom:0;">
+    <div class="sensor-mini-widget" id="sensorMiniWidget">
+        <div class="sensor-mini-header">
+            <span class="iot-pulse pulse-active"></span>
+            <i class="fa-solid fa-microchip"></i>
+            <span data-i18n="dashSensorLive">Live Farm Sensors</span>
+            <a href="/iot" style="margin-left:auto; font-size:.8rem; color:var(--primary);">View Full Dashboard →</a>
+        </div>
+        <div class="sensor-mini-values">
+            <span class="sensor-mini-item mini-temp"><i class="fa-solid fa-temperature-half"></i> <span id="miniTemp">--</span></span>
+            <span class="sensor-mini-item mini-hum"><i class="fa-solid fa-droplet"></i> <span id="miniHumidity">--</span></span>
+            <span class="sensor-mini-item mini-moist"><i class="fa-solid fa-water"></i> <span id="miniMoisture">--</span></span>
+            <span class="sensor-mini-item mini-ph"><i class="fa-solid fa-flask-vial"></i> <span id="miniPH">--</span></span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Premium Weather Widget ── -->
+<section class="section">
+    <div class="premium-widget-header weather-header">
+        <div class="pw-header-left">
+            <div class="pw-icon-wrap weather-icon-wrap"><i class="fa-solid fa-cloud-sun"></i></div>
+            <div>
+                <h3>Today's Weather</h3>
+                <small>Auto-updated for your area</small>
+            </div>
+        </div>
+        <span class="pw-live-badge"><span class="pw-live-dot"></span> LIVE</span>
+    </div>
+    <div class="premium-weather-widget" id="dashWeatherWidget">
+        <div class="dash-weather-loading"><i class="fa-solid fa-spinner fa-spin"></i> Fetching weather...</div>
+    </div>
+</section>
+
+<!-- ── Premium Mandi Price Widget ── -->
+<section class="section">
+    <div class="premium-widget-header mandi-header">
+        <div class="pw-header-left">
+            <div class="pw-icon-wrap mandi-icon-wrap"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            <div>
+                <h3>Today's Mandi Prices</h3>
+                <small>Top crop prices from Agmarknet</small>
+            </div>
+        </div>
+        <span class="pw-live-badge mandi-live"><span class="pw-live-dot"></span> LIVE</span>
+    </div>
+    <div class="premium-mandi-widget" id="dashMandiWidget">
+        <div class="dash-mandi-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading market prices...</div>
+    </div>
+</section>
+
+<!-- ── Recent Forum Activity ── -->
+<section class="section">
+    <div class="section-heading">
+        <i class="fa-solid fa-comments"></i>
+        <h3>Community Forum</h3>
+        <small>Latest discussions from farmers</small>
+    </div>
+    <div class="dash-forum-widget" id="dashForumWidget">
+        <div class="dash-forum-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading posts...</div>
+    </div>
+    <div style="text-align:center; margin-top:.75rem;">
+        <a href="/forum" class="btn btn-outline-sm"><i class="fa-solid fa-comments"></i> Visit Forum</a>
+    </div>
+</section>
+
+<!-- ── My Alerts Status ── -->
+<section class="section section-alt">
+    <div class="section-heading">
+        <i class="fa-solid fa-bell"></i>
+        <h3>My Alert Subscriptions</h3>
+        <small>Stay informed on weather &amp; prices</small>
+    </div>
+    <div class="dash-alerts-widget" id="dashAlertsWidget">
+        <div class="dash-alerts-loading"><i class="fa-solid fa-spinner fa-spin"></i> Checking alerts...</div>
+    </div>
+</section>
+
+<!-- ── Powered By Trust Strip ── -->
+<section class="section" style="padding-bottom:0;">
+    <div class="powered-by-strip">
+        <span class="powered-by-label">Powered by</span>
+        <div class="powered-by-items">
+            <span class="powered-by-item"><i class="fa-solid fa-robot"></i> Google Gemini AI</span>
+            <span class="powered-by-divider">•</span>
+            <span class="powered-by-item"><i class="fa-solid fa-cloud-sun"></i> Real-time Weather API</span>
+            <span class="powered-by-divider">•</span>
+            <span class="powered-by-item"><i class="fa-solid fa-store"></i> Agmarknet Mandi Data</span>
+            <span class="powered-by-divider">•</span>
+            <span class="powered-by-item"><i class="fa-solid fa-microchip"></i> ESP32 IoT Sensors</span>
+        </div>
+    </div>
+</section>
+
+<!-- ── Government Partners Banner ── -->
+<section class="section section-alt govt-partners-section">
+    <h2 class="section-title">Government Portals & Resources</h2>
+    <div class="govt-partners-grid">
+        <a href="https://pmkisan.gov.in" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <span>PM-KISAN</span>
+        </a>
+        <a href="https://pmfby.gov.in" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <span>PMFBY</span>
+        </a>
+        <a href="https://enam.gov.in" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <span>e-NAM</span>
+        </a>
+        <a href="https://soilhealth.dac.gov.in" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-flask-vial"></i></div>
+            <span>Soil Health</span>
+        </a>
+        <a href="https://mkisan.gov.in" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+            <span>mKisan</span>
+        </a>
+        <a href="https://www.nabard.org" target="_blank" class="govt-partner-card">
+            <div class="govt-partner-icon"><i class="fa-solid fa-building-columns"></i></div>
+            <span>NABARD</span>
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Banner Slider
+let currentSlide = 0;
+const slides = document.querySelectorAll('.banner-slide');
+const dots = document.querySelectorAll('.banner-dot');
+let autoSlideTimer;
+
+function showSlide(idx) {
+    slides.forEach(s => s.classList.remove('active'));
+    dots.forEach(d => d.classList.remove('active'));
+    currentSlide = (idx + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+}
+function slideBanner(dir) { showSlide(currentSlide + dir); resetAutoSlide(); }
+function goToSlide(idx) { showSlide(idx); resetAutoSlide(); }
+function resetAutoSlide() {
+    clearInterval(autoSlideTimer);
+    autoSlideTimer = setInterval(() => showSlide(currentSlide + 1), 5000);
+}
+resetAutoSlide();
+
+// Daily Farming Tip — rotates each day
+const farmTips = [
+    "Water your crops early in the morning (before 8 AM) to reduce evaporation loss by up to 30%.",
+    "Use neem oil spray as a natural pesticide — it's effective against 200+ insect species.",
+    "Rotate crops every season to prevent soil nutrient depletion and reduce pest buildup.",
+    "Add vermicompost to your soil — it increases water retention by 40% and provides natural NPK.",
+    "Check soil moisture at 6-inch depth before irrigating — saves water and prevents root rot.",
+    "Intercropping legumes with cereals naturally fixes nitrogen and improves overall yield.",
+    "Prune diseased leaves immediately to prevent spread — clean tools with diluted bleach between plants."
+];
+const tipEl = document.getElementById('dailyTip');
+if (tipEl) { tipEl.textContent = farmTips[new Date().getDay()]; }
+
+// ── Dashboard Widgets: fetch real data ──
+
+// Weather Widget — Premium No-Graph
+(async function loadWeather() {
+    const el = document.getElementById('dashWeatherWidget');
+    try {
+        const city = '{{ user.city or "Delhi" }}';
+        const r = await fetch('/api/weather?city=' + encodeURIComponent(city));
+        const d = await r.json();
+        if (!d.current) throw new Error('No data');
+        const c = d.current;
+        const fc7 = d.forecast7 || d.forecast || [];
+
+        const desc = (c.desc || '').toLowerCase();
+        let wIcon = '☀️', grad = 'linear-gradient(135deg,#1e3a5f,#2d6a9f)';
+        if (desc.includes('rain')||desc.includes('drizzle')) { wIcon='🌧️'; grad='linear-gradient(135deg,#1a3a4a,#2a5f7f)'; }
+        else if (desc.includes('cloud')||desc.includes('overcast')||desc.includes('partly')) { wIcon='⛅'; grad='linear-gradient(135deg,#2c3e6b,#3a6ea5)'; }
+        else if (desc.includes('thunder')||desc.includes('storm')) { wIcon='⛈️'; grad='linear-gradient(135deg,#2d1b4e,#5b3a8c)'; }
+        else if (desc.includes('fog')||desc.includes('mist')||desc.includes('haze')) { wIcon='🌫️'; grad='linear-gradient(135deg,#37474f,#546e7a)'; }
+        else if (desc.includes('snow')) { wIcon='❄️'; grad='linear-gradient(135deg,#1a3a5c,#4a6fa5)'; }
+        else if (desc.includes('sunny')||desc.includes('clear')) { wIcon='☀️'; grad='linear-gradient(135deg,#e65100,#bf360c)'; }
+
+        function wmoE(code){if(!code&&code!==0)return'🌤️';if(code===0)return'☀️';if(code<=3)return'⛅';if(code<=49)return'🌫️';if(code<=59)return'🌦️';if(code<=69)return'🌧️';if(code<=79)return'🌨️';if(code<=86)return'🌨️';if(code>=95)return'⛈️';return'🌤️';}
+
+        const hum = parseInt(c.humidity)||0;
+        const uvVal = parseFloat(c.uv)||0;
+        const uvClr = uvVal>=8?'#ff6b6b':uvVal>=6?'#ffa502':uvVal>=3?'#ffd43b':'#51cf66';
+        const uvLbl = uvVal>=8?'Very High':uvVal>=6?'High':uvVal>=3?'Moderate':'Low';
+
+        // ── 7-day forecast strip ──
+        const days = fc7.slice(0,7);
+        let strip = '';
+        if (days.length) {
+            let cards = '';
+            days.forEach((f,i)=>{
+                const emoji = wmoE(f.weatherCode);
+                const hi = Math.round(parseFloat(f.maxTemp)||0);
+                const lo = Math.round(parseFloat(f.minTemp)||0);
+                const rp = f.rainProb||0;
+                const dy = f.date?new Date(f.date+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short'}):'';
+                const isToday = i===0;
+                cards+=`<div class="cw-day${isToday?' cw-today':''}">
+                    <span class="cw-dy">${isToday?'Today':dy}</span>
+                    <span class="cw-de">${emoji}</span>
+                    <span class="cw-hi">${hi}°</span>
+                    <div class="cw-bar"><div class="cw-bar-fill" style="height:${Math.max(((hi-lo)/45)*100,18)}%"></div></div>
+                    <span class="cw-lo">${lo}°</span>
+                    ${rp>20?`<span class="cw-rn">💧${rp}%</span>`:''}
+                </div>`;
+            });
+            strip=`<div class="cw-strip">${cards}</div>`;
+        }
+
+        el.innerHTML = `
+            <div class="cw-hero" style="background:${grad}">
+                <div class="cw-top">
+                    <div class="cw-left">
+                        <span class="cw-emoji">${wIcon}</span>
+                        <div class="cw-info">
+                            <span class="cw-temp">${c.temp}°<small>C</small></span>
+                            <span class="cw-desc">${c.desc||'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="cw-right">
+                        <span class="cw-city"><i class="fa-solid fa-location-dot"></i> ${d.city||city}</span>
+                        <svg class="cw-hum-ring" width="52" height="52" viewBox="0 0 52 52">
+                            <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="4"/>
+                            <circle cx="26" cy="22" r="22" fill="none" stroke="#fff" stroke-width="4"
+                                stroke-dasharray="${(hum/100)*138} 138" stroke-linecap="round"
+                                transform="rotate(-90 26 26)" opacity=".85"/>
+                            <text x="26" y="29" text-anchor="middle" fill="#fff" font-size="11" font-weight="800">${hum}%</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="cw-pills">
+                    <div class="cw-pill"><i class="fa-solid fa-temperature-half"></i> Feels ${c.feelsLike}°</div>
+                    <div class="cw-pill"><i class="fa-solid fa-wind"></i> ${c.windSpeed} km/h</div>
+                    <div class="cw-pill" style="border-color:${uvClr}55"><i class="fa-solid fa-sun" style="color:${uvClr}"></i> UV ${c.uv||'--'} <small>${uvLbl}</small></div>
+                    ${c.pressure?`<div class="cw-pill"><i class="fa-solid fa-gauge-high"></i> ${c.pressure} hPa</div>`:''}
+                </div>
+                ${strip}
+            </div>
+            <a href="/weather" class="pw-widget-link weather-link"><i class="fa-solid fa-arrow-right"></i> Full Forecast</a>
+        `;
+    } catch(e) {
+        el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-cloud-sun"></i><p>Could not load weather. <a href="/weather">Check manually →</a></p></div>';
+    }
+})();
+
+// Mandi Prices Widget — Premium
+(async function loadMandi() {
+    const el = document.getElementById('dashMandiWidget');
+    try {
+        const r = await fetch('/api/mandi');
+        const d = await r.json();
+        const crops = d.crops || d.data || [];
+        if (!crops.length) throw new Error('No data');
+        const top = crops.slice(0, 8);
+
+        // Find max price for bar scaling
+        const maxPrice = Math.max(...top.map(c => parseFloat(c.avg_price || c.modal_price || c.price || 0)), 1);
+
+        // Crop icons map
+        const cropIcons = {
+            'Rice':'fa-bowl-rice','Wheat':'fa-wheat-awn','Maize':'fa-seedling','Sugarcane':'fa-candy-cane',
+            'Cotton':'fa-cloud','Soybean':'fa-leaf','Mustard':'fa-droplet','Gram':'fa-circle',
+            'Groundnut':'fa-circle','Bajra':'fa-seedling','Jowar':'fa-seedling','Barley':'fa-wheat-awn',
+            'Tur':'fa-circle','Moong':'fa-leaf','Urad':'fa-circle','Jute':'fa-layer-group',
+        };
+        const cropColors = [
+            '#059669','#0ea5e9','#8b5cf6','#f59e0b','#ef4444','#ec4899','#14b8a6','#6366f1'
+        ];
+
+        let rows = '';
+        top.forEach((c, i) => {
+            const name = c.commodity || c.crop || c.name || '';
+            const price = c.avg_price || c.modal_price || c.price || 0;
+            const msp = c.msp || 0;
+            const diff = (msp && price) ? (parseFloat(price) - parseFloat(msp)) : null;
+            const isUp = diff !== null && diff >= 0;
+            const diffClass = diff !== null ? (isUp ? 'pm-price-up' : 'pm-price-down') : '';
+            const diffIcon = diff !== null ? (isUp ? '<i class="fa-solid fa-arrow-trend-up"></i>' : '<i class="fa-solid fa-arrow-trend-down"></i>') : '';
+            const diffLabel = diff !== null ? `${isUp ? '+' : ''}₹${diff.toFixed(0)}` : '';
+            const barWidth = Math.max((parseFloat(price) / maxPrice) * 100, 8);
+            const icon = cropIcons[name] || 'fa-seedling';
+            const color = cropColors[i % cropColors.length];
+
+            rows += `<div class="pm-mandi-row">
+                <div class="pm-crop-info">
+                    <div class="pm-crop-icon" style="background:${color}15;color:${color}"><i class="fa-solid ${icon}"></i></div>
+                    <div class="pm-crop-text">
+                        <span class="pm-crop-name">${name}</span>
+                        <span class="pm-crop-msp">MSP ₹${msp}/q</span>
+                    </div>
+                </div>
+                <div class="pm-price-section">
+                    <div class="pm-price-bar-wrap">
+                        <div class="pm-price-bar" style="width:${barWidth}%;background:${color}"></div>
+                    </div>
+                    <div class="pm-price-values">
+                        <span class="pm-price-amount" style="color:${color}">₹${price}<small>/q</small></span>
+                        ${diff !== null ? `<span class="pm-price-diff ${diffClass}">${diffIcon} ${diffLabel}</span>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        // Summary stats
+        const avgAll = Math.round(top.reduce((s, c) => s + (parseFloat(c.avg_price || 0)), 0) / top.length);
+        const aboveMsp = top.filter(c => parseFloat(c.avg_price || 0) >= parseFloat(c.msp || 0)).length;
+
+        el.innerHTML = `
+            <div class="pm-mandi-summary">
+                <div class="pm-summary-card">
+                    <div class="pm-summary-icon" style="background:linear-gradient(135deg,#059669,#10b981)"><i class="fa-solid fa-chart-line"></i></div>
+                    <div><span class="pm-summary-val">${top.length}</span><span class="pm-summary-label">Crops Tracked</span></div>
+                </div>
+                <div class="pm-summary-card">
+                    <div class="pm-summary-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div><span class="pm-summary-val">₹${avgAll}</span><span class="pm-summary-label">Avg Price/q</span></div>
+                </div>
+                <div class="pm-summary-card">
+                    <div class="pm-summary-icon" style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div><span class="pm-summary-val">${aboveMsp}/${top.length}</span><span class="pm-summary-label">Above MSP</span></div>
+                </div>
+            </div>
+            <div class="pm-mandi-list">${rows}</div>
+            <a href="/mandi" class="pw-widget-link mandi-link"><i class="fa-solid fa-store"></i> View All Mandi Prices</a>
+        `;
+    } catch(e) {
+        el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-store"></i><p>Could not load mandi prices. <a href="/mandi">Check manually →</a></p></div>';
+    }
+})();
+
+// Forum Widget
+(async function loadForum() {
+    const el = document.getElementById('dashForumWidget');
+    try {
+        const r = await fetch('/api/forum/posts');
+        const d = await r.json();
+        const posts = d.posts || d || [];
+        if (!posts.length) throw new Error('No posts');
+        const recent = posts.slice(0, 4);
+        let html = '<div class="dash-forum-list">';
+        recent.forEach(p => {
+            const time = p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short'}) : '';
+            html += `<div class="dash-forum-post">
+                <div class="dash-forum-meta">
+                    <span class="forum-author"><i class="fa-solid fa-user-circle"></i> ${p.username || 'Farmer'}</span>
+                    <span class="forum-time">${time}</span>
+                    <span class="forum-cat badge-pill">${p.category || 'General'}</span>
+                </div>
+                <div class="dash-forum-title">${p.title || ''}</div>
+                <div class="dash-forum-stats">
+                    <span><i class="fa-solid fa-heart"></i> ${p.likes || 0}</span>
+                    <span><i class="fa-solid fa-reply"></i> ${p.reply_count || 0} replies</span>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        el.innerHTML = html;
+    } catch(e) {
+        el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-comments"></i><p>No forum posts yet. <a href="/forum">Start a discussion →</a></p></div>';
+    }
+})();
+
+// Alerts Widget
+(async function loadAlerts() {
+    const el = document.getElementById('dashAlertsWidget');
+    try {
+        const r = await fetch('/api/alerts/status');
+        const d = await r.json();
+        const subs = d.subscriptions || [];
+        if (!subs.length) {
+            el.innerHTML = `<div class="empty-state">
+                <i class="fa-solid fa-bell-slash"></i>
+                <p>No active alerts. <a href="/alerts">Subscribe to weather &amp; price alerts →</a></p>
+            </div>`;
+            return;
+        }
+        let html = '<div class="dash-alerts-list">';
+        subs.forEach(s => {
+            const icon = s.alert_type === 'weather' ? 'fa-cloud-bolt' : s.alert_type === 'price' ? 'fa-indian-rupee-sign' : 'fa-bell';
+            html += `<div class="dash-alert-item">
+                <i class="fa-solid ${icon}"></i>
+                <span class="alert-type">${s.alert_type || 'Alert'}</span>
+                <span class="alert-city">${s.city || ''}</span>
+                <span class="badge-pill badge-green">Active</span>
+            </div>`;
+        });
+        html += '</div>';
+        el.innerHTML = html;
+    } catch(e) {
+        el.innerHTML = `<div class="empty-state">
+            <i class="fa-solid fa-bell"></i>
+            <p>Sign in to view alerts. <a href="/alerts">Manage Alerts →</a></p>
+        </div>`;
+    }
+})();
+
+// ── Store user city/crop for chatbot smart actions ──
+window._ksUserCity = '{{ user.city or "Delhi" }}';
+window._ksUserCrop = '{{ user.crop or "wheat" }}';
+
+// ══ Daily Farm Briefing ══
+(function initBriefing() {
+    const generateBtn = document.getElementById('briefingGenerateBtn');
+    const refreshBtn = document.getElementById('briefingRefreshBtn');
+    const speakBtn = document.getElementById('briefingSpeakBtn');
+    const contentEl = document.getElementById('briefingContent');
+    const footerEl = document.getElementById('briefingFooter');
+    const pillsEl = document.getElementById('briefingPills');
+    const timeEl = document.getElementById('briefingTime');
+    let briefingText = '';
+
+    function renderBriefing(data) {
+        briefingText = data.briefing;
+        // Convert markdown-like text to HTML
+        let html = briefingText
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\n/g, "<br>");
+        contentEl.innerHTML = `<div class="briefing-text">${html}</div>`;
+
+        // Data pills
+        let pills = '';
+        if (data.weather && data.weather.temp) {
+            pills += `<span class="briefing-pill weather-pill"><i class="fa-solid fa-temperature-half"></i> ${data.weather.temp}°C</span>`;
+        }
+        if (data.sensor && data.sensor.moisture) {
+            pills += `<span class="briefing-pill sensor-pill"><i class="fa-solid fa-droplet"></i> ${data.sensor.moisture}%</span>`;
+        }
+        if (data.mandi && data.mandi.length) {
+            pills += `<span class="briefing-pill mandi-pill"><i class="fa-solid fa-store"></i> ${data.mandi.length} prices</span>`;
+        }
+        pillsEl.innerHTML = pills;
+        timeEl.textContent = data.cached ? 'Cached from today' : 'Just generated';
+        footerEl.style.display = '';
+        speakBtn.style.display = '';
+    }
+
+    async function generateBriefing(force = false) {
+        contentEl.innerHTML = '<div class="briefing-loading"><i class="fa-solid fa-spinner fa-spin"></i> AI briefing generate ho raha hai...</div>';
+        try {
+            const r = await fetch('/api/briefing/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    city: window._ksUserCity || '',
+                    crops: window._ksUserCrop || '',
+                    force: force
+                })
+            });
+            const d = await r.json();
+            if (d.success) {
+                renderBriefing(d);
+            } else {
+                contentEl.innerHTML = `<div class="briefing-error"><i class="fa-solid fa-exclamation-triangle"></i> ${d.error || 'Briefing generate nahi ho paya. Login karein.'}</div>`;
+            }
+        } catch(e) {
+            contentEl.innerHTML = '<div class="briefing-error"><i class="fa-solid fa-exclamation-triangle"></i> Network error</div>';
+        }
+    }
+
+    // Try loading latest briefing on page load
+    (async function() {
+        try {
+            const r = await fetch('/api/briefing/latest');
+            const d = await r.json();
+            if (d.success && d.briefing) {
+                renderBriefing(d);
+            }
+        } catch(e) {}
+    })();
+
+    if (generateBtn) generateBtn.onclick = () => generateBriefing(false);
+    if (refreshBtn) refreshBtn.onclick = () => generateBriefing(true);
+    let briefingStopped = false;
+    if (speakBtn) speakBtn.onclick = () => {
+        if (window.speechSynthesis && briefingText) {
+            if (window.speechSynthesis.speaking || briefingStopped === false) {
+                // If currently speaking, stop everything
+                if (window.speechSynthesis.speaking) {
+                    briefingStopped = true;
+                    window.speechSynthesis.cancel();
+                    speakBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                    return;
+                }
+            }
+            briefingStopped = false;
+            speakBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
+            const clean = briefingText.replace(/\*\*(.+?)\*\*/g, '$1').replace(/[#*_~`>|]/g, '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '');
+            const phrases = clean.split(/(?<=[।.!?\n])\s*/).filter(s => s.trim().length > 2);
+            let idx = 0;
+            function speakNext() {
+                if (briefingStopped || idx >= phrases.length) {
+                    speakBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                    briefingStopped = false;
+                    return;
+                }
+                const u = new SpeechSynthesisUtterance(phrases[idx++]);
+                u.lang = 'hi-IN'; u.rate = 1.0;
+                u.onend = () => { if (!briefingStopped) speakNext(); };
+                u.onerror = () => { if (!briefingStopped) speakNext(); };
+                speechSynthesis.speak(u);
+            }
+            speakNext();
+        }
+    };
+})();
+
+// ══ Voice Command Bar ══
+(function initVoiceBar() {
+    const micBtn = document.getElementById('voiceBarMic');
+    const hintEl = document.getElementById('voiceBarHint');
+    const statusEl = document.getElementById('voiceBarStatus');
+    let vcRecognition = null;
+
+    if (!micBtn) return;
+
+    micBtn.onclick = () => {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) {
+            statusEl.innerHTML = '<span class="voice-status-error">Browser mein voice support nahi hai</span>';
+            return;
+        }
+
+        if (vcRecognition) {
+            vcRecognition.stop();
+            vcRecognition = null;
+            micBtn.classList.remove('voice-mic-active');
+            hintEl.textContent = 'Try: "Mausam kaisa hai" or "Sensor data dikhao"';
+            return;
+        }
+
+        vcRecognition = new SR();
+        vcRecognition.lang = 'hi-IN';
+        vcRecognition.interimResults = true;
+        vcRecognition.maxAlternatives = 1;
+
+        micBtn.classList.add('voice-mic-active');
+        hintEl.textContent = '🎤 Bol rahe hain... sun raha hoon';
+        statusEl.innerHTML = '';
+
+        vcRecognition.onresult = (e) => {
+            const transcript = e.results[0][0].transcript;
+            const isFinal = e.results[0].isFinal;
+            hintEl.textContent = transcript;
+
+            if (isFinal) {
+                processVoiceBarCommand(transcript);
+            }
+        };
+
+        vcRecognition.onerror = (e) => {
+            micBtn.classList.remove('voice-mic-active');
+            vcRecognition = null;
+            hintEl.textContent = 'Voice error — try again';
+        };
+
+        vcRecognition.onend = () => {
+            micBtn.classList.remove('voice-mic-active');
+            vcRecognition = null;
+        };
+
+        vcRecognition.start();
+    };
+
+    async function processVoiceBarCommand(text) {
+        statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        try {
+            const r = await fetch('/api/voice/command', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, lang: 'hi' })
+            });
+            const d = await r.json();
+
+            if (d.navigate) {
+                statusEl.innerHTML = `<span class="voice-status-ok"><i class="fa-solid fa-arrow-right"></i> ${d.speak || ''}</span>`;
+                // Speak then navigate
+                if (d.speak && window.speechSynthesis) {
+                    const u = new SpeechSynthesisUtterance(d.speak);
+                    u.lang = 'hi-IN'; u.rate = 1.0;
+                    u.onend = () => { window.location.href = d.navigate; };
+                    speechSynthesis.speak(u);
+                } else {
+                    setTimeout(() => { window.location.href = d.navigate; }, 500);
+                }
+            } else if (d.trigger === 'briefing') {
+                statusEl.innerHTML = '<span class="voice-status-ok"><i class="fa-solid fa-sun"></i> Briefing generate ho raha hai...</span>';
+                if (d.speak && window.speechSynthesis) {
+                    const u = new SpeechSynthesisUtterance(d.speak);
+                    u.lang = 'hi-IN'; speechSynthesis.speak(u);
+                }
+                document.getElementById('briefingGenerateBtn')?.click();
+            } else if (d.speak) {
+                statusEl.innerHTML = `<span class="voice-status-ok">${d.speak.substring(0, 150)}${d.speak.length > 150 ? '...' : ''}</span>`;
+                // Speak the response
+                if (window.speechSynthesis) {
+                    const phrases = d.speak.split(/(?<=[।.!?])\s*/).filter(s => s.trim().length > 2);
+                    let idx = 0;
+                    function speakN() {
+                        if (idx >= phrases.length) return;
+                        const u = new SpeechSynthesisUtterance(phrases[idx++]);
+                        u.lang = 'hi-IN'; u.rate = 1.0;
+                        u.onend = speakN; u.onerror = speakN;
+                        speechSynthesis.speak(u);
+                    }
+                    speakN();
+                }
+            }
+
+            // Reset hint after 8 seconds
+            setTimeout(() => {
+                hintEl.textContent = 'Try: "Mausam kaisa hai" or "Sensor data dikhao"';
+                statusEl.innerHTML = '';
+            }, 8000);
+
+        } catch(e) {
+            statusEl.innerHTML = '<span class="voice-status-error">Server se connection nahi ho paya</span>';
+        }
+    }
+})();
+</script>
+{% endblock %}

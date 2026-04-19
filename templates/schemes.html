@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Government Schemes — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<section class="hero-crop-v2 hero-schemes">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Govt Schemes</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#1e40af,#7c3aed);"><i class="fa-solid fa-landmark"></i></div>
+        <h1><span data-i18n="schemeTitle">Government Schemes Eligibility</span></h1>
+        <p data-i18n="schemeSub">Check which schemes you're eligible for and apply online</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-file-invoice"></i> <span data-i18n="schmStat1">15+ Schemes</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-indian-rupee-sign"></i> <span data-i18n="schmStat2">₹6000/year</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="schmStat3">Free Insurance</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-hand-holding-dollar"></i> <span data-i18n="schmStat4">Subsidy</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="crop-layout">
+        <!-- Eligibility Form -->
+        <div class="crop-form-card">
+            <h2><i class="fa-solid fa-clipboard-question"></i> <span data-i18n="schemeCheck">Check Your Eligibility</span></h2>
+            <form id="schemeForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label data-i18n="schemeLand">Land Area (Hectares)</label>
+                        <input type="number" id="schemeLand" min="0" max="1000" step="0.1" placeholder="e.g. 2.5" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="schemeCategory">Farmer Category</label>
+                        <select id="schemeCategory" required>
+                            <option value="all">General Farmer</option>
+                            <option value="small">Small Farmer (< 2 ha)</option>
+                            <option value="marginal">Marginal Farmer (< 1 ha)</option>
+                        </select>
+                    </div>
+                    <div class="input-group full-width">
+                        <label data-i18n="schemeState">Your State</label>
+                        <select id="schemeState">
+                            <option value="">All India</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Odisha">Odisha</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="schemeCheckBtn">Check Eligibility</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Results -->
+        <div class="crop-result-card" id="schemeResult" style="display:none;">
+            <h2><i class="fa-solid fa-check-circle"></i> <span data-i18n="schemeResultTitle">Eligible Schemes</span></h2>
+            <div id="schemeCount" class="top-crop"></div>
+            <div id="schemeList" class="scheme-list"></div>
+        </div>
+    </div>
+</section>
+
+<!-- All Schemes -->
+<section class="section section-alt">
+    <h2 class="section-title" data-i18n="allSchemes">All Government Schemes</h2>
+    <div id="allSchemes" class="info-grid"></div>
+</section>
+
+<!-- Application Guide + Deadlines (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-blue">
+        <i class="fa-solid fa-circle-info"></i>
+        <div><strong data-i18n="schmHowApplyTitle">How to Apply:</strong> <span data-i18n="schmHowApplyDesc">Most schemes can be applied online via pmkisan.gov.in or DBT Agriculture Portal. You'll need Aadhaar, bank details, and land records (khasra/khatauni).</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-list-check"></i>
+        <h3 data-i18n="schmGuideTitle">Step-by-Step Application Guide</h3>
+    </div>
+    <div class="steps-row">
+        <div class="step-item">
+            <div class="step-num">1</div>
+            <h5 data-i18n="schmS1Title">Gather Documents</h5>
+            <p data-i18n="schmS1Desc">Aadhaar card, bank passbook, land records (khatauni), caste certificate (if applicable)</p>
+        </div>
+        <div class="step-item">
+            <div class="step-num">2</div>
+            <h5 data-i18n="schmS2Title">Visit CSC/Portal</h5>
+            <p data-i18n="schmS2Desc">Go to Common Service Center or apply online at pmkisan.gov.in / state agriculture portal</p>
+        </div>
+        <div class="step-item">
+            <div class="step-num">3</div>
+            <h5 data-i18n="schmS3Title">Fill Application</h5>
+            <p data-i18n="schmS3Desc">Enter personal, land, bank details. Upload documents. Verify with Aadhaar OTP</p>
+        </div>
+        <div class="step-item">
+            <div class="step-num">4</div>
+            <h5 data-i18n="schmS4Title">Track Status</h5>
+            <p data-i18n="schmS4Desc">Check application status online. Benefits transferred directly to bank via DBT</p>
+        </div>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <h4 data-i18n="schmPMKisan">PM-KISAN</h4>
+            <p data-i18n="schmPMKisanDesc">₹6,000/year in 3 installments. All landholding families eligible. Next installment usually in April, August, December.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-shield-halved"></i></div>
+            <h4 data-i18n="schmPMFBY">PMFBY (Fasal Bima)</h4>
+            <p data-i18n="schmPMFBYDesc">Crop insurance at 2% premium (Kharif), 1.5% (Rabi). Enroll before sowing deadline through bank or CSC.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dbeafe; color:#1e40af;"><i class="fa-solid fa-credit-card"></i></div>
+            <h4 data-i18n="schmKCC">Kisan Credit Card</h4>
+            <p data-i18n="schmKCCDesc">Short-term loan up to ₹3 lakh at 4% interest (with subsidy). Apply at any bank with land documents.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

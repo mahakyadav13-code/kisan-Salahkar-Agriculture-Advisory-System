@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+{% block title %}Agri Marketplace — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<div id="mktPageData" data-user-state="{{ user.state|default('') }}" data-user-district="{{ user.district|default('') }}" data-user-phone="{{ user.phone|default('') }}"></div>
+<!-- Hero -->
+<section class="hero hero-crop-v2">
+    <div class="hero-bg-img" style="background-image:url('/static/images/marketplace.jpeg');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> <span data-i18n="navHome">Home</span></a> <span class="sep">/</span> <span data-i18n="navMarket">Marketplace</span></div>
+        <div class="hero-crop-badge"><i class="fa-solid fa-handshake"></i></div>
+        <h1 data-i18n="mktTitle">Agri Marketplace</h1>
+        <p data-i18n="mktSubtitle">Buy &amp; sell crops directly — AI-powered matching, auto-pricing &amp; WhatsApp contracts</p>
+        <div class="hero-stats-row" id="heroStats">
+            <div class="hero-stat"><i class="fa-solid fa-boxes-stacked"></i> <span id="statListings">0</span> <span data-i18n="mktListings">Listings</span></div>
+            <div class="hero-stat"><i class="fa-solid fa-cart-shopping"></i> <span id="statDemands">0</span> <span data-i18n="mktDemands">Demands</span></div>
+            <div class="hero-stat"><i class="fa-solid fa-handshake"></i> <span id="statDeals">0</span> <span data-i18n="mktDeals">Deals</span></div>
+        </div>
+        <div class="mkt-ticker" id="topCropsTicker"></div>
+    </div>
+</section>
+
+<!-- Role selector — buyer or seller -->
+<div class="mkt-role-selector" id="roleSelector">
+    <div class="mkt-role-inner">
+        <h2><i class="fa-solid fa-user-tag"></i> <span data-i18n="mktIWant">I want to…</span></h2>
+        <div class="mkt-role-cards">
+            <button class="mkt-role-card" onclick="setMarketRole('seller')">
+                <div class="mkt-role-icon seller"><i class="fa-solid fa-wheat-awn"></i></div>
+                <h3 data-i18n="mktSellCrop">Sell My Crop</h3>
+                <p data-i18n="mktSellDesc">List your harvest, get AI pricing, auto-match with buyers</p>
+                <span class="mkt-role-tag" data-i18n="mktSellTag">फसल बेचें</span>
+            </button>
+            <button class="mkt-role-card" onclick="setMarketRole('buyer')">
+                <div class="mkt-role-icon buyer"><i class="fa-solid fa-cart-shopping"></i></div>
+                <h3 data-i18n="mktBuyCrops">Buy Crops</h3>
+                <p data-i18n="mktBuyDesc">Post demand, browse listings, get best deals from farmers</p>
+                <span class="mkt-role-tag" data-i18n="mktBuyTag">फसल खरीदें</span>
+            </button>
+        </div>
+        <button class="mkt-browse-link" onclick="setMarketRole('browse')">
+            <i class="fa-solid fa-compass"></i> <span data-i18n="mktBrowse">Just browse the marketplace</span>
+        </button>
+    </div>
+</div>
+
+<!-- ═══ SELLER VIEW ═══ -->
+<section class="section mkt-view" id="sellerView" style="display:none;">
+    <div class="mkt-layout">
+        <div class="mkt-form-card">
+            <div class="form-card-header">
+                <div class="form-card-header-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fa-solid fa-wheat-awn"></i></div>
+                <div>
+                    <h2 data-i18n="mktListTitle">List Your Crop for Sale</h2>
+                    <p class="form-card-subtitle" data-i18n="mktListSub">AI will auto-price and match buyers instantly</p>
+                </div>
+            </div>
+            <!-- Voice Input Button -->
+            <div class="mkt-voice-bar">
+                <button type="button" class="mkt-voice-btn" id="mktVoiceSellBtn" onclick="mktVoiceListing()">
+                    <i class="fa-solid fa-microphone"></i> <span data-i18n="mktSpeakList">Speak to List</span>
+                </button>
+                <span class="mkt-voice-hint" data-i18n="mktVoiceHintSell">Say: "Rice 500 kg 2000 rupees premium"</span>
+            </div>
+            <div class="mkt-voice-preview" id="mktVoicePreview" style="display:none;"></div>
+            <!-- Quick-sell buttons -->
+            <div class="mkt-quick-sell">
+                <span class="mkt-quick-label"><i class="fa-solid fa-bolt"></i> <span data-i18n="mktQuickLabel">Quick:</span></span>
+                <button type="button" onclick="mktQuickSell('Rice')">🌾 Rice</button>
+                <button type="button" onclick="mktQuickSell('Wheat')">🌾 Wheat</button>
+                <button type="button" onclick="mktQuickSell('Onion')">🧅 Onion</button>
+                <button type="button" onclick="mktQuickSell('Potato')">🥔 Potato</button>
+                <button type="button" onclick="mktQuickSell('Tomato')">🍅 Tomato</button>
+                <button type="button" onclick="mktQuickSell('Cotton')">🌿 Cotton</button>
+            </div>
+            <form id="sellerForm" onsubmit="submitSellerListing(event)">
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-seedling"></i> <span data-i18n="mktCropDetails">Crop Details</span></div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="sellCrop" data-i18n="mktCropName">Crop Name</label>
+                            <select id="sellCrop" required onchange="fetchAutoPrice()">
+                                <option value="" data-i18n="mktSelectCrop">-- Select Crop --</option>
+                                <option value="Rice">Rice (धान)</option>
+                                <option value="Wheat">Wheat (गेहूं)</option>
+                                <option value="Maize">Maize (मक्का)</option>
+                                <option value="Cotton">Cotton (कपास)</option>
+                                <option value="Sugarcane">Sugarcane (गन्ना)</option>
+                                <option value="Soybean">Soybean (सोयाबीन)</option>
+                                <option value="Groundnut">Groundnut (मूंगफली)</option>
+                                <option value="Mustard">Mustard (सरसों)</option>
+                                <option value="Chili">Chili (मिर्च)</option>
+                                <option value="Onion">Onion (प्याज)</option>
+                                <option value="Potato">Potato (आलू)</option>
+                                <option value="Tomato">Tomato (टमाटर)</option>
+                                <option value="Banana">Banana (केला)</option>
+                                <option value="Mango">Mango (आम)</option>
+                                <option value="Coconut">Coconut (नारियल)</option>
+                                <option value="Coffee">Coffee (कॉफी)</option>
+                                <option value="Tea">Tea (चाय)</option>
+                                <option value="Jute">Jute (जूट)</option>
+                                <option value="Lentil">Lentil (दाल)</option>
+                                <option value="Chickpea">Chickpea (चना)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="sellQty" data-i18n="mktQtyKg">Quantity (kg)</label>
+                            <input type="number" id="sellQty" min="1" max="100000" step="1" placeholder="e.g. 500" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="sellQuality" data-i18n="mktQuality">Quality Grade</label>
+                            <select id="sellQuality" onchange="fetchAutoPrice()">
+                                <option value="standard" data-i18n="mktQualStd">Standard (सामान्य)</option>
+                                <option value="premium" data-i18n="mktQualPrem">Premium (उत्तम)</option>
+                                <option value="fair" data-i18n="mktQualFair">Fair (ठीक)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="sellPrice"><span data-i18n="mktAskPrice">Ask Price (₹/quintal)</span> <small class="ai-price-hint" id="aiPriceHint" style="display:none;"></small></label>
+                            <input type="number" id="sellPrice" min="0" step="1" data-i18n="mktAIPriceEmpty" placeholder="Leave empty for AI price">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="mktLocation">Location</span></div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="sellState" data-i18n="mktState">State</label>
+                            <select id="sellState">
+                                <option value="" data-i18n="mktSelectState">-- Select State --</option>
+                                {% for s in states %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="sellDistrict" data-i18n="mktDistrict">District</label>
+                            <input type="text" id="sellDistrict" placeholder="e.g. Nashik">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="sellDesc" data-i18n="mktDescOpt">Description (optional)</label>
+                        <textarea id="sellDesc" rows="2" maxlength="300" data-i18n="mktDescPh" placeholder="Fresh harvest, organic, etc."></textarea>
+                    </div>
+                    <!-- Photo Upload -->
+                    <div class="input-group">
+                        <label data-i18n="mktPhotosLabel">Crop Photos (up to 3)</label>
+                        <div class="mkt-photo-upload-area" id="photoUploadArea">
+                            <div class="mkt-photo-previews" id="photoPreviewGrid"></div>
+                            <label class="mkt-photo-add-btn" id="photoAddBtn">
+                                <i class="fa-solid fa-camera"></i>
+                                <span data-i18n="mktAddPhoto">Add Photo</span>
+                                <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handlePhotoSelect(event)">
+                            </label>
+                        </div>
+                        <small class="text-muted" data-i18n="mktPhotoHint">JPG, PNG or WebP • Max 5 MB each • Photos increase buyer trust!</small>
+                    </div>
+                </div>
+                <!-- Delivery / Logistics Section -->
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-truck-fast"></i> <span data-i18n="mktDeliverySection">Delivery Options</span></div>
+                    <p class="mkt-delivery-hint" data-i18n="mktDeliveryHint">Select how buyers can receive the crop</p>
+                    <div class="mkt-delivery-checkboxes" id="sellDeliveryOpts">
+                        <label class="mkt-delivery-check active">
+                            <input type="checkbox" name="sellDelivery" value="pickup" checked onchange="toggleDeliveryCheck(this)">
+                            <i class="fa-solid fa-person-walking-luggage"></i>
+                            <span data-i18n="mktPickup">Self Pickup</span>
+                        </label>
+                        <label class="mkt-delivery-check">
+                            <input type="checkbox" name="sellDelivery" value="delivery" onchange="toggleDeliveryCheck(this)">
+                            <i class="fa-solid fa-truck"></i>
+                            <span data-i18n="mktDelivery">Home Delivery</span>
+                        </label>
+                        <label class="mkt-delivery-check">
+                            <input type="checkbox" name="sellDelivery" value="mandi" onchange="toggleDeliveryCheck(this)">
+                            <i class="fa-solid fa-store"></i>
+                            <span data-i18n="mktMandiPickup">Mandi Pickup</span>
+                        </label>
+                    </div>
+                    <div class="input-group" style="margin-top:.75rem">
+                        <label for="sellAddress"><i class="fa-solid fa-location-dot"></i> <span data-i18n="mktSellerAddr">Pickup / Farm Address</span></label>
+                        <textarea id="sellAddress" rows="2" maxlength="300" data-i18n="mktAddrPh" placeholder="Village, Tehsil, District — helps buyers plan pickup"></textarea>
+                    </div>
+                </div>
+                <div class="crop-form-actions">
+                    <button type="button" class="btn btn-voice-sm" onclick="setMarketRole(null)"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="mktBack">Back</span></button>
+                    <button type="submit" class="btn btn-predict" id="sellSubmitBtn"><i class="fa-solid fa-bolt"></i> <span data-i18n="mktListMatch">List &amp; Auto-Match</span></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Seller results / matches panel -->
+        <div class="mkt-result-panel" id="sellerResults" style="display:none;">
+            <div class="result-card-header">
+                <div class="result-card-header-icon" style="background:linear-gradient(135deg,#27ae60,#10b981)"><i class="fa-solid fa-bullseye"></i></div>
+                <div><h2 data-i18n="mktFoundBuyers">AI Found Matching Buyers</h2><p class="result-card-subtitle" data-i18n="mktTopMatches">Top matches for your listing</p></div>
+            </div>
+            <div id="sellerMatchList"></div>
+            <div id="sellerListingSummary" class="mkt-listing-summary"></div>
+        </div>
+    </div>
+    <!-- Seller's existing listings & deals -->
+    <div class="mkt-existing-panel" id="sellerExisting" style="display:none;"></div>
+</section>
+
+<!-- ═══ BUYER VIEW ═══ -->
+<section class="section mkt-view" id="buyerView" style="display:none;">
+    <div class="mkt-layout">
+        <div class="mkt-form-card">
+            <div class="form-card-header">
+                <div class="form-card-header-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-cart-shopping"></i></div>
+                <div>
+                    <h2 data-i18n="mktDemandTitle">Post Your Crop Demand</h2>
+                    <p class="form-card-subtitle" data-i18n="mktDemandSub">Tell us what you need — we'll find sellers</p>
+                </div>
+            </div>
+            <!-- Voice Input Button -->
+            <div class="mkt-voice-bar">
+                <button type="button" class="mkt-voice-btn mkt-voice-buyer" id="mktVoiceBuyBtn" onclick="mktVoiceDemand()">
+                    <i class="fa-solid fa-microphone"></i> <span data-i18n="mktSpeakSearch">Speak to Search</span>
+                </button>
+                <span class="mkt-voice-hint" data-i18n="mktVoiceHintBuy">Say: "Wheat 200 kg max 2500 rupees"</span>
+            </div>
+            <div class="mkt-voice-preview" id="mktVoicePreviewBuy" style="display:none;"></div>
+            <form id="buyerForm" onsubmit="submitBuyerDemand(event)">
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-seedling"></i> <span data-i18n="mktWhatNeed">What do you need?</span></div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="buyCrop" data-i18n="mktCrop">Crop</label>
+                            <select id="buyCrop" required>
+                                <option value="" data-i18n="mktSelectCrop">-- Select Crop --</option>
+                                <option value="Rice">Rice (धान)</option>
+                                <option value="Wheat">Wheat (गेहूं)</option>
+                                <option value="Maize">Maize (मक्का)</option>
+                                <option value="Cotton">Cotton (कपास)</option>
+                                <option value="Sugarcane">Sugarcane (गन्ना)</option>
+                                <option value="Soybean">Soybean (सोयाबीन)</option>
+                                <option value="Groundnut">Groundnut (मूंगफली)</option>
+                                <option value="Mustard">Mustard (सरसों)</option>
+                                <option value="Chili">Chili (मिर्च)</option>
+                                <option value="Onion">Onion (प्याज)</option>
+                                <option value="Potato">Potato (आलू)</option>
+                                <option value="Tomato">Tomato (टमाटर)</option>
+                                <option value="Banana">Banana (केला)</option>
+                                <option value="Mango">Mango (आम)</option>
+                                <option value="Coconut">Coconut (नारियल)</option>
+                                <option value="Coffee">Coffee (कॉफी)</option>
+                                <option value="Tea">Tea (चाय)</option>
+                                <option value="Jute">Jute (जूट)</option>
+                                <option value="Lentil">Lentil (दाल)</option>
+                                <option value="Chickpea">Chickpea (चना)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="buyQty" data-i18n="mktQtyKg">Quantity (kg)</label>
+                            <input type="number" id="buyQty" min="1" max="100000" step="1" placeholder="e.g. 200" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="buyMaxPrice" data-i18n="mktMaxPrice">Max Price (₹/quintal)</label>
+                            <input type="number" id="buyMaxPrice" min="0" step="1" placeholder="e.g. 2500">
+                        </div>
+                        <div class="input-group">
+                            <label for="buyState" data-i18n="mktPrefState">Preferred State</label>
+                            <select id="buyState">
+                                <option value="" data-i18n="mktAnyState">-- Any State --</option>
+                                {% for s in states %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="buyDistrict" data-i18n="mktDistrictOpt">District (optional)</label>
+                        <input type="text" id="buyDistrict" placeholder="e.g. Pune">
+                    </div>
+                </div>
+                <div class="crop-form-actions">
+                    <button type="button" class="btn btn-voice-sm" onclick="setMarketRole(null)"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="mktBack">Back</span></button>
+                    <button type="submit" class="btn btn-predict" style="background:linear-gradient(135deg,#3b82f6,#2563eb)" id="buySubmitBtn"><i class="fa-solid fa-bolt"></i> <span data-i18n="mktFindSellers">Find Sellers</span></button>
+                </div>
+            </form>
+        </div>
+        <div class="mkt-result-panel" id="buyerResults" style="display:none;">
+            <div class="result-card-header">
+                <div class="result-card-header-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <div><h2 data-i18n="mktMatchSellers">Matching Seller Listings</h2><p class="result-card-subtitle" data-i18n="mktBestMatches">Best matches for your demand</p></div>
+            </div>
+            <div id="buyerMatchList"></div>
+        </div>
+    </div>
+    <!-- Buyer's existing demands & available listings -->
+    <div class="mkt-existing-panel" id="buyerExisting" style="display:none;"></div>
+</section>
+
+<!-- ═══ BROWSE VIEW ═══ -->
+<section class="section mkt-view" id="browseView" style="display:none;">
+    <div class="mkt-browse-tabs">
+        <button class="mkt-tab active" onclick="switchBrowseTab('listings',this)"><i class="fa-solid fa-boxes-stacked"></i> <span data-i18n="mktTabListings">Sell Listings</span></button>
+        <button class="mkt-tab" onclick="switchBrowseTab('demands',this)"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="mktTabDemands">Buy Demands</span></button>
+        <button class="mkt-tab" onclick="switchBrowseTab('myitems',this)"><i class="fa-solid fa-user"></i> <span data-i18n="mktTabMyItems">My Items</span></button>
+    </div>
+    <div class="mkt-browse-filters">
+        <select id="browseFilterCrop" onchange="loadBrowseTab()">
+            <option value="" data-i18n="mktAllCrops">All Crops</option>
+            <option value="Rice">Rice</option><option value="Wheat">Wheat</option><option value="Maize">Maize</option>
+            <option value="Cotton">Cotton</option><option value="Sugarcane">Sugarcane</option><option value="Onion">Onion</option>
+            <option value="Potato">Potato</option><option value="Tomato">Tomato</option><option value="Soybean">Soybean</option>
+        </select>
+        <select id="browseFilterState" onchange="loadBrowseTab()">
+            <option value="" data-i18n="mktAllStates">All States</option>
+            {% for s in states %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-voice-sm" onclick="setMarketRole(null)"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="mktBack">Back</span></button>
+    </div>
+    <div id="browseContent" class="mkt-browse-content"></div>
+</section>
+
+<!-- ═══ DEAL DETAIL MODAL ═══ -->
+<div class="mkt-modal-backdrop" id="dealModal" style="display:none;" onclick="if(event.target===this)closeDealModal()">
+    <div class="mkt-modal">
+        <button class="mkt-modal-close" onclick="closeDealModal()">&times;</button>
+        <div id="dealModalContent"></div>
+    </div>
+</div>
+
+<!-- ═══ CHAT PANEL ═══ -->
+<div class="mkt-modal-backdrop" id="chatModal" style="display:none;" onclick="if(event.target===this)closeChatModal()">
+    <div class="mkt-modal mkt-chat-modal">
+        <div class="mkt-chat-header">
+            <div style="display:flex;align-items:center;gap:.5rem">
+                <div class="mkt-chat-avatar"><i class="fa-solid fa-user"></i></div>
+                <div><h3 id="chatPeerName" data-i18n="mktNegotiate">Negotiate</h3><small class="mkt-chat-status"><i class="fa-solid fa-circle" style="font-size:.5rem;color:#22c55e"></i> <span data-i18n="mktOnline">Online</span></small></div>
+            </div>
+            <button class="mkt-modal-close" onclick="closeChatModal()">&times;</button>
+        </div>
+        <div class="mkt-chat-body" id="chatMessages"></div>
+        <div class="mkt-quick-replies">
+            <button onclick="sendQuickReply(t('mktQrAvail'))" data-i18n="mktQrAvail">Is this available?</button>
+            <button onclick="sendQuickReply(t('mktQrBestPrice'))" data-i18n="mktQrBestPrice">Best price?</button>
+            <button onclick="sendQuickReply(t('mktQrPhotos'))" data-i18n="mktQrPhotos">Share photos?</button>
+            <button onclick="sendQuickReply(t('mktQrInterested'))" data-i18n="mktQrInterested">Interested</button>
+            <button onclick="sendQuickReply(t('mktQrDelivery'))" data-i18n="mktQrDelivery">Delivery?</button>
+        </div>
+        <div class="mkt-wa-notify-bar" id="mktWaNotifyBar" style="display:none;"></div>
+        <form class="mkt-chat-input" onsubmit="sendChatMsg(event)">
+            <button type="button" class="mkt-voice-chat-btn" id="mktVoiceChatBtn" onclick="mktVoiceChat()" title="Voice message"><i class="fa-solid fa-microphone"></i></button>
+            <input type="text" id="chatInput" data-i18n="mktTypeMsg" placeholder="Type a message..." autocomplete="off" maxlength="500">
+            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+</div>
+
+<!-- ═══ LOGISTICS MODAL ═══ -->
+<div class="mkt-modal-backdrop" id="logisticsModal" style="display:none;" onclick="if(event.target===this)closeLogisticsModal()">
+    <div class="mkt-modal">
+        <button class="mkt-modal-close" onclick="closeLogisticsModal()">&times;</button>
+        <div class="mkt-logistics-content" id="logisticsModalContent">
+            <div class="mkt-logistics-header">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h3 data-i18n="mktLogisticsTitle">Delivery Arrangement</h3>
+            </div>
+            <div class="form-section">
+                <div class="form-section-label"><i class="fa-solid fa-route"></i> <span data-i18n="mktDeliveryType">Delivery Method</span></div>
+                <div class="mkt-delivery-options" id="deliveryOptions">
+                    <label class="mkt-delivery-opt active" onclick="selectDeliveryType('pickup')">
+                        <input type="radio" name="deliveryType" value="pickup" checked>
+                        <i class="fa-solid fa-person-walking-luggage"></i>
+                        <span data-i18n="mktPickup">Self Pickup</span>
+                        <small data-i18n="mktPickupDesc">Buyer picks up from seller</small>
+                    </label>
+                    <label class="mkt-delivery-opt" onclick="selectDeliveryType('delivery')">
+                        <input type="radio" name="deliveryType" value="delivery">
+                        <i class="fa-solid fa-truck"></i>
+                        <span data-i18n="mktDelivery">Home Delivery</span>
+                        <small data-i18n="mktDeliveryDesc">Seller delivers to buyer</small>
+                    </label>
+                    <label class="mkt-delivery-opt" onclick="selectDeliveryType('mandi')">
+                        <input type="radio" name="deliveryType" value="mandi">
+                        <i class="fa-solid fa-store"></i>
+                        <span data-i18n="mktMandiPickup">Mandi Pickup</span>
+                        <small data-i18n="mktMandiDesc">Meet at nearest mandi</small>
+                    </label>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="input-group">
+                    <label for="logPickupAddr"><i class="fa-solid fa-location-dot"></i> <span data-i18n="mktPickupAddr">Pickup / Seller Address</span></label>
+                    <textarea id="logPickupAddr" rows="2" maxlength="300" placeholder="Village, Tehsil, District, State"></textarea>
+                </div>
+                <div class="input-group" id="logDeliveryAddrGroup" style="display:none;">
+                    <label for="logDeliveryAddr"><i class="fa-solid fa-house"></i> <span data-i18n="mktDeliveryAddr">Delivery Address</span></label>
+                    <textarea id="logDeliveryAddr" rows="2" maxlength="300" placeholder="Full delivery address"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="logTransportCost"><i class="fa-solid fa-indian-rupee-sign"></i> <span data-i18n="mktTransportCost">Transport Cost (₹)</span></label>
+                    <input type="number" id="logTransportCost" min="0" step="10" value="0" placeholder="0">
+                    <small class="text-muted" data-i18n="mktTransportHint">Set 0 if self pickup or included in price</small>
+                </div>
+            </div>
+            <input type="hidden" id="logDealId" value="0">
+            <div class="crop-form-actions" style="margin-top:1rem">
+                <button class="btn btn-voice-sm" onclick="closeLogisticsModal()"><i class="fa-solid fa-xmark"></i> <span data-i18n="mktCancel">Cancel</span></button>
+                <button class="btn btn-predict" onclick="saveLogistics()"><i class="fa-solid fa-check"></i> <span data-i18n="mktSaveLogistics">Save Logistics</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ PAYMENT MODAL ═══ -->
+<div class="mkt-modal-backdrop" id="paymentModal" style="display:none;" onclick="if(event.target===this)closePaymentModal()">
+    <div class="mkt-modal">
+        <button class="mkt-modal-close" onclick="closePaymentModal()">&times;</button>
+        <div class="mkt-payment-content" id="paymentModalContent">
+            <div class="mkt-payment-header">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3 data-i18n="mktPaymentTitle">Secure Payment</h3>
+            </div>
+            <div class="mkt-payment-summary" id="paymentSummary"></div>
+            <div class="mkt-payment-actions" id="paymentActions">
+                <button class="btn btn-predict mkt-pay-btn" id="payNowBtn" onclick="initiatePayment()">
+                    <i class="fa-solid fa-lock"></i> <span data-i18n="mktPayNow">Pay Now via Razorpay</span>
+                </button>
+                <div class="mkt-payment-badges">
+                    <span><i class="fa-solid fa-shield-check"></i> <span data-i18n="mktSecure">Secure</span></span>
+                    <span><i class="fa-solid fa-credit-card"></i> UPI / Card / Net Banking</span>
+                    <span><i class="fa-solid fa-building-columns"></i> Razorpay</span>
+                </div>
+            </div>
+            <input type="hidden" id="payDealId" value="0">
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}

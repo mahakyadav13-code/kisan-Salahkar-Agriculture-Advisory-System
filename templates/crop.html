@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% block title %}Crop Recommendation — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<!-- Hero with full-bleed crop photography -->
+<section class="hero hero-crop-v2">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Crop Advice</span></div>
+        <div class="hero-crop-badge"><i class="fa-solid fa-seedling"></i></div>
+        <h1><span data-i18n="cropTitle">Crop Recommendation</span></h1>
+        <p data-i18n="cropSubtitle">AI-powered crop advisory based on your soil, climate &amp; location data</p>
+        <div class="hero-stats-row">
+            <div class="hero-stat"><i class="fa-solid fa-wheat-awn"></i> <span data-i18n="cropStat1">22+ Crops</span></div>
+            <div class="hero-stat"><i class="fa-solid fa-brain"></i> <span data-i18n="cropStat2">AI Driven</span></div>
+            <div class="hero-stat"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="cropStat3">36 States</span></div>
+            <div class="hero-stat"><i class="fa-solid fa-microchip"></i> <span data-i18n="cropStat4">IoT Ready</span></div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- AI Data Source Banner (hidden by default, shown after sensor fill) -->
+<div id="aiSourceBanner" class="ai-source-banner" style="display:none;">
+    <div class="ai-source-inner">
+        <div class="ai-source-icon"><i class="fa-solid fa-brain"></i></div>
+        <div class="ai-source-text">
+            <strong data-i18n="cropAIActive">AI-Powered Data Active</strong>
+            <span id="aiSourceDetail" data-i18n="cropAIDetail">Some values below were predicted by our trained machine learning models using your sensor data.</span>
+        </div>
+        <button class="ai-source-close" onclick="this.parentElement.parentElement.style.display='none'" title="Dismiss">&times;</button>
+    </div>
+</div>
+
+<!-- How It Works Steps (MY SUGGESTION) -->
+<section class="section" style="padding-bottom:0;">
+    <div class="section-heading">
+        <i class="fa-solid fa-route"></i>
+        <h3 data-i18n="cropHowTitle">How It Works</h3>
+        <small data-i18n="cropHowSub">3 simple steps to get crop advice</small>
+    </div>
+    <div class="steps-row">
+        <div class="step-item">
+            <div class="step-num">1</div>
+            <h5 data-i18n="cropStep1">Enter Soil Data</h5>
+            <p data-i18n="cropStep1Desc">Input N, P, K, pH &amp; moisture from your soil report or use IoT sensors</p>
+        </div>
+        <div class="step-item">
+            <div class="step-num">2</div>
+            <h5 data-i18n="cropStep2">Add Climate Info</h5>
+            <p data-i18n="cropStep2Desc">Temperature, humidity &amp; rainfall — auto-detected from your location</p>
+        </div>
+        <div class="step-item">
+            <div class="step-num">3</div>
+            <h5 data-i18n="cropStep3">Get AI Results</h5>
+            <p data-i18n="cropStep3Desc">Receive top 5 crop matches with tips, disease alerts &amp; MSP info</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="crop-layout">
+
+        <!-- Form -->
+        <div class="crop-form-card">
+            <div class="form-card-header">
+                <div class="form-card-header-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                <div>
+                    <h2><span data-i18n="cropFormTitle">Soil &amp; Climate Data</span></h2>
+                    <p class="form-card-subtitle" data-i18n="cropFormSub">Fill in your field conditions or use smart auto-fill</p>
+                </div>
+            </div>
+
+            <!-- How it works - collapsible -->
+            <details class="how-it-works">
+                <summary><i class="fa-solid fa-circle-info"></i> <span data-i18n="cropHowWork">How does this work?</span></summary>
+                <div class="how-it-works-body">
+                    <div class="how-step">
+                        <div class="how-step-num">1</div>
+                        <div><strong>Enter data</strong> — Provide soil &amp; climate values manually, via soil preset, or use <em>Sensor Fill</em> from your ESP32 IoT device.</div>
+                    </div>
+                    <div class="how-step">
+                        <div class="how-step-num">2</div>
+                        <div><strong>AI Analysis</strong> — Our trained ML model (RandomForest + KNN) analyzes your data against 22+ crop profiles.</div>
+                    </div>
+                    <div class="how-step">
+                        <div class="how-step-num">3</div>
+                        <div><strong>Get Results</strong> — Receive top 5 crop recommendations with confidence scores, growing tips, disease alerts &amp; MSP info.</div>
+                    </div>
+                </div>
+            </details>
+
+            <form id="cropForm">
+                <!-- Location Section -->
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="cropLocSeason">Location &amp; Season</span></div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="stateSelect"><span data-i18n="lblState">Your State</span></label>
+                            <select id="stateSelect">
+                                <option value="">-- Select State --</option>
+                                {% for s in states %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="districtSelect" data-i18n="lblDistrict">District</label>
+                            <select id="districtSelect" disabled>
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+                        <div class="input-group full-width">
+                            <label for="seasonSelect"><span data-i18n="lblSeason">Cropping Season</span></label>
+                            <select id="seasonSelect">
+                                <option value="">-- Auto-detect from month --</option>
+                                <option value="kharif">Kharif (खरीफ) — Jun–Oct (Monsoon)</option>
+                                <option value="rabi">Rabi (रबी) — Nov–Mar (Winter)</option>
+                                <option value="zaid">Zaid (जायद) — Mar–Jun (Summer)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soil Section -->
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-earth-asia"></i> <span data-i18n="cropSoilProps">Soil Properties</span></div>
+                    <div class="input-group full-width soil-preset-row">
+                        <label><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="lblSoilPreset">Quick Fill — Soil Type</span></label>
+                        <select id="soilPreset" onchange="applySoilPreset(this.value)">
+                            <option value="">-- Enter values manually --</option>
+                            <option value="alluvial">Alluvial Soil (जलोढ़ मिट्टी) — Indo-Gangetic Plains</option>
+                            <option value="black">Black Cotton Soil (काली मिट्टी) — Deccan Plateau</option>
+                            <option value="red">Red Soil (लाल मिट्टी) — Southern &amp; Eastern India</option>
+                            <option value="laterite">Laterite Soil (लैटेराइट) — Western Ghats, NE India</option>
+                            <option value="sandy">Sandy/Desert Soil (रेतीली मिट्टी) — Rajasthan, Gujarat</option>
+                            <option value="clayey">Clayey Soil (चिकनी मिट्टी) — Coastal &amp; Wetlands</option>
+                            <option value="loamy">Loamy Soil (दोमट मिट्टी) — General Purpose</option>
+                        </select>
+                        <small class="preset-hint" style="color:var(--text-light);margin-top:4px;">Fills pH &amp; Moisture. NPK values come from AI Sensor Fill.</small>
+                    </div>
+                    <div class="form-grid form-grid-3">
+                        <div class="input-group input-npk">
+                            <label for="nitrogen"><i class="fa-solid fa-n" style="color:#27ae60"></i> <span data-i18n="lblN">Nitrogen</span> <small data-i18n="unitKgHa">kg/ha</small></label>
+                            <input type="number" id="nitrogen" min="0" max="200" step="1" placeholder="e.g. 90" required>
+                        </div>
+                        <div class="input-group input-npk">
+                            <label for="phosphorus"><i class="fa-solid fa-p" style="color:#e67e22"></i> <span data-i18n="lblP">Phosphorus</span> <small data-i18n="unitKgHa">kg/ha</small></label>
+                            <input type="number" id="phosphorus" min="0" max="200" step="1" placeholder="e.g. 45" required>
+                        </div>
+                        <div class="input-group input-npk">
+                            <label for="potassium"><i class="fa-solid fa-k" style="color:#8e44ad"></i> <span data-i18n="lblK">Potassium</span> <small data-i18n="unitKgHa">kg/ha</small></label>
+                            <input type="number" id="potassium" min="0" max="200" step="1" placeholder="e.g. 40" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="ph"><i class="fa-solid fa-vial" style="color:#3498db"></i> <span data-i18n="lblPH">Soil pH</span></label>
+                            <input type="number" id="ph" min="0" max="14" step="0.1" placeholder="e.g. 6.5" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="soilMoisture"><i class="fa-solid fa-droplet" style="color:#2980b9"></i> <span data-i18n="lblMoisture">Soil Moisture</span> <small>%</small></label>
+                            <input type="number" id="soilMoisture" min="0" max="100" step="0.1" placeholder="e.g. 45">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Climate Section -->
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-cloud-sun"></i> <span data-i18n="cropClimate">Climate Conditions</span></div>
+                    <div class="form-grid form-grid-3">
+                        <div class="input-group">
+                            <label for="temperature"><i class="fa-solid fa-temperature-half" style="color:#e74c3c"></i> <span data-i18n="lblTemp">Temperature</span> <small data-i18n="unitC">°C</small></label>
+                            <input type="number" id="temperature" min="-10" max="60" step="0.1" placeholder="e.g. 25" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="humidity"><i class="fa-solid fa-water" style="color:#1abc9c"></i> <span data-i18n="lblHumidity">Humidity</span> <small data-i18n="unitPct">%</small></label>
+                            <input type="number" id="humidity" min="0" max="100" step="0.1" placeholder="e.g. 70" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="rainfall"><i class="fa-solid fa-cloud-rain" style="color:#2c3e50"></i> <span data-i18n="lblRainfall">Rainfall</span> <small data-i18n="unitMm">mm</small></label>
+                            <input type="number" id="rainfall" min="0" max="600" step="0.1" placeholder="e.g. 120" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="crop-form-actions">
+                    <button type="button" class="btn-sensor-fill" onclick="autoFillFromSensors()" title="Fill from IoT sensors">
+                        <i class="fa-solid fa-microchip"></i> <span data-i18n="sensorFill">Sensor Fill</span>
+                    </button>
+                    <button type="button" class="btn btn-voice-sm" onclick="voiceFillCropForm()" title="Fill using voice">
+                        <i class="fa-solid fa-microphone"></i> <span data-i18n="voiceFill">Voice Fill</span>
+                    </button>
+                    <button type="submit" class="btn btn-predict" id="predictBtn">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> <span data-i18n="btnPredict">Find Best Crop</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results -->
+        <div class="crop-result-card" id="resultCard" style="display:none;">
+            <div class="result-card-header">
+                <div class="result-card-header-icon"><i class="fa-solid fa-trophy"></i></div>
+                <div>
+                    <h2><span data-i18n="resultTitle">AI Recommendation</span></h2>
+                    <p class="result-card-subtitle" data-i18n="cropResultSub">Based on your soil &amp; climate analysis</p>
+                </div>
+            </div>
+
+            <div id="topCrop" class="top-crop"></div>
+
+            <!-- Data Source Summary -->
+            <div id="dataSourceSummary" class="data-source-summary" style="display:none;"></div>
+
+            <h3 class="results-subheading"><i class="fa-solid fa-ranking-star"></i> <span data-i18n="topMatches">Top 5 Matches</span></h3>
+            <div id="cropBars" class="crop-bars"></div>
+
+            <div class="chart-container">
+                <canvas id="cropChart" height="260"></canvas>
+            </div>
+
+            <div id="cropTip" class="crop-tip"></div>
+
+            <!-- Disease Info for recommended crop -->
+            <div id="cropDiseases" class="crop-diseases" style="display:none;">
+                <h3 class="results-subheading"><i class="fa-solid fa-virus"></i> <span data-i18n="commonDiseases">Common Diseases</span></h3>
+                <div id="diseaseList"></div>
+            </div>
+
+            <!-- MSP Info -->
+            <div id="cropMSP" class="crop-msp" style="display:none;"></div>
+
+            <!-- Soil Moisture Advisory -->
+            <div id="moistureAdvisory" class="moisture-advisory" style="display:none;"></div>
+
+            <!-- Result Actions -->
+            <div class="result-actions">
+                <button class="btn btn-voice-sm" id="speakResult" title="Listen to recommendation">
+                    <i class="fa-solid fa-volume-high"></i> <span data-i18n="listenBtn">Listen</span>
+                </button>
+                <button class="btn btn-whatsapp" id="shareWhatsApp" title="Share on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i> <span data-i18n="shareWA">Share on WhatsApp</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Crop Knowledge — visual cards with photos -->
+<section class="section crop-knowledge-section">
+    <h2 class="section-heading"><i class="fa-solid fa-book-open"></i> <span data-i18n="cropKnowTitle">Know Your Crops</span></h2>
+    <div class="crop-knowledge-grid">
+        <div class="crop-knowledge-card">
+            <img src="https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&h=250&fit=crop" alt="Rice field" loading="lazy">
+            <div class="crop-knowledge-body">
+                <h4 data-i18n="cropRice">Rice (धान)</h4>
+                <p data-i18n="cropRiceDesc">Kharif crop needing 1200+ mm rain, 20-35°C temp, clay/loam soil with pH 5.5-6.5</p>
+                <div class="crop-knowledge-tags"><span data-i18n="tagKharif">Kharif</span><span data-i18n="tagWater">Water-intensive</span><span data-i18n="tagStaple">Staple</span></div>
+            </div>
+        </div>
+        <div class="crop-knowledge-card">
+            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=250&fit=crop" alt="Wheat field" loading="lazy">
+            <div class="crop-knowledge-body">
+                <h4 data-i18n="cropWheat">Wheat (गेहूं)</h4>
+                <p data-i18n="cropWheatDesc">Rabi crop suited for 10-25°C, 400-650 mm rainfall, well-drained loam soil pH 6.0-7.5</p>
+                <div class="crop-knowledge-tags"><span data-i18n="tagRabi">Rabi</span><span data-i18n="tagCool">Cool Climate</span><span data-i18n="tagStaple">Staple</span></div>
+            </div>
+        </div>
+        <div class="crop-knowledge-card">
+            <img src="https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?w=400&h=250&fit=crop" alt="Maize corn" loading="lazy">
+            <div class="crop-knowledge-body">
+                <h4 data-i18n="cropMaize">Maize (मक्का)</h4>
+                <p data-i18n="cropMaizeDesc">Multi-season crop, 18-30°C, 500-800 mm rainfall, sandy loam pH 5.5-7.0</p>
+                <div class="crop-knowledge-tags"><span data-i18n="tagMulti">Multi-season</span><span data-i18n="tagVersatile">Versatile</span><span data-i18n="tagFeed">Feed crop</span></div>
+            </div>
+        </div>
+        <div class="crop-knowledge-card">
+            <img src="https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=400&h=250&fit=crop" alt="Mustard field" loading="lazy">
+            <div class="crop-knowledge-body">
+                <h4 data-i18n="cropMustard">Mustard (सरसों)</h4>
+                <p data-i18n="cropMustardDesc">Rabi oilseed crop, 15-25°C, 200-400 mm rain, well-drained soil pH 6.0-7.0</p>
+                <div class="crop-knowledge-tags"><span data-i18n="tagRabi">Rabi</span><span data-i18n="tagOilseed">Oilseed</span><span data-i18n="tagLowWater">Low water</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Prediction History -->
+<section class="section" id="historySection" style="display:none;">
+    <h2 class="section-heading"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="predictionHistory">Your Recent Predictions</span></h2>
+    <div id="historyList" class="history-list"></div>
+</section>
+{% endblock %}

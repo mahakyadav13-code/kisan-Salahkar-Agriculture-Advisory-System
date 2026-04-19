@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+{% block title %}My Profile — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-crop-v2 hero-profile">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Profile</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#15803d,#22c55e);"><i class="fa-solid fa-user"></i></div>
+        <h1>My Profile</h1>
+        <p>Manage your farm details, preferences, and account settings</p>
+    </div>
+</section>
+
+<section class="section">
+<div class="profile-layout">
+
+<!-- ═══ Section 1: Identity Card ═══ -->
+<div class="profile-card profile-identity-card">
+    <div class="profile-avatar" id="profileAvatar" style="background:{{ profile.avatar_color or '#15803d' }}">
+        <span>{{ profile.name[:2]|upper if profile.name else 'KS' }}</span>
+    </div>
+    <div class="profile-id-info">
+        <h2 class="profile-name" id="dispName">{{ profile.name }}</h2>
+        <p class="profile-username">@{{ profile.username }}</p>
+        {% if profile.phone %}
+        <p class="profile-phone"><i class="fa-solid fa-phone"></i> {{ profile.phone }}</p>
+        {% endif %}
+        <div class="profile-meta-row">
+            <span class="profile-meta"><i class="fa-solid fa-calendar"></i> Member since {{ profile.created_at[:10] if profile.created_at else 'N/A' }}</span>
+            <span class="profile-meta"><i class="fa-solid fa-language"></i> {{ 'Hindi' if profile.lang_pref == 'hi' else 'English' }}</span>
+        </div>
+    </div>
+    <button class="btn btn-outline-sm profile-edit-btn" onclick="openEditModal('personal')"><i class="fa-solid fa-pen"></i> Edit</button>
+</div>
+
+<!-- ═══ Section 2: Farm Details ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-tractor"></i> Farm Details</h3>
+        <button class="btn btn-outline-sm" onclick="openEditModal('farm')"><i class="fa-solid fa-pen"></i> Edit</button>
+    </div>
+    <div class="profile-details-grid">
+        <div class="profile-detail">
+            <span class="detail-label">State</span>
+            <span class="detail-value" id="dispState">{{ profile.state or '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">District / City</span>
+            <span class="detail-value" id="dispDistrict">{{ profile.district or profile.location or '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Village</span>
+            <span class="detail-value" id="dispVillage">{{ profile.village or '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Farm Size</span>
+            <span class="detail-value" id="dispLandHa">{{ profile.land_ha or 0 }} hectares</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Farmer Category</span>
+            <span class="detail-value" id="dispCategory">{{ profile.category|capitalize if profile.category and profile.category != 'all' else '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Primary Crops</span>
+            <span class="detail-value" id="dispCrops">{{ profile.primary_crops or '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Irrigation Type</span>
+            <span class="detail-value" id="dispIrrigation">{{ profile.irrigation or '—' }}</span>
+        </div>
+        <div class="profile-detail">
+            <span class="detail-label">Soil Type</span>
+            <span class="detail-value" id="dispSoilType">{{ profile.soil_type or '—' }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Section 3: Activity Dashboard ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-chart-line"></i> Activity Dashboard</h3>
+    </div>
+    <div class="profile-stats-grid">
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#dcfce7; color:#16a34a;"><i class="fa-solid fa-seedling"></i></div>
+            <div class="stat-num">{{ stats.predictions }}</div>
+            <div class="stat-label">Predictions</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-flask-vial"></i></div>
+            <div class="stat-num">{{ stats.soil_tests }}</div>
+            <div class="stat-label">Soil Tests</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#dbeafe; color:#2563eb;"><i class="fa-solid fa-comments"></i></div>
+            <div class="stat-num">{{ stats.forum_posts }}</div>
+            <div class="stat-label">Forum Posts</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#fce7f3; color:#db2777;"><i class="fa-solid fa-reply"></i></div>
+            <div class="stat-num">{{ stats.forum_replies }}</div>
+            <div class="stat-label">Replies</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#ede9fe; color:#7c3aed;"><i class="fa-solid fa-store"></i></div>
+            <div class="stat-num">{{ stats.fav_mandis }}</div>
+            <div class="stat-label">Saved Mandis</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-icon" style="background:#ffedd5; color:#ea580c;"><i class="fa-solid fa-bell"></i></div>
+            <div class="stat-num">{{ stats.alerts }}</div>
+            <div class="stat-label">Alerts</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Section 4: Badges ═══ -->
+{% if badges %}
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-award"></i> Badges & Achievements</h3>
+    </div>
+    <div class="profile-badges-grid">
+        {% for b in badges %}
+        <div class="profile-badge" style="border-color:{{ b.color }};">
+            <i class="fa-solid {{ b.icon }}" style="color:{{ b.color }};"></i>
+            <span>{{ b.name }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- ═══ Section 5: Prediction History ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Prediction History</h3>
+        <a href="/crop" class="btn btn-outline-sm"><i class="fa-solid fa-plus"></i> New Prediction</a>
+    </div>
+    {% if predictions %}
+    <div class="profile-table-wrap">
+        <table class="profile-table">
+            <thead><tr><th>Date</th><th>State</th><th>Season</th><th>Top Crop</th><th>Confidence</th></tr></thead>
+            <tbody>
+            {% for p in predictions %}
+            <tr>
+                <td>{{ p.created_at[:10] if p.created_at else '' }}</td>
+                <td>{{ p.state }}</td>
+                <td>{{ p.season }}</td>
+                <td><strong>{{ p.top_crop }}</strong></td>
+                <td><span class="confidence-pill">{{ '%.0f'|format(p.confidence) }}%</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="profile-empty"><i class="fa-solid fa-seedling"></i> No predictions yet. <a href="/crop">Get your first crop recommendation →</a></p>
+    {% endif %}
+</div>
+
+<!-- ═══ Section 6: Soil Reports ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-flask-vial"></i> Soil Test Reports</h3>
+        <a href="/soil" class="btn btn-outline-sm"><i class="fa-solid fa-plus"></i> New Test</a>
+    </div>
+    {% if soil_reports %}
+    <div class="profile-table-wrap">
+        <table class="profile-table">
+            <thead><tr><th>Date</th><th>Location</th><th>N</th><th>P</th><th>K</th><th>pH</th><th>Soil Type</th></tr></thead>
+            <tbody>
+            {% for s in soil_reports %}
+            <tr>
+                <td>{{ s.created_at[:10] if s.created_at else '' }}</td>
+                <td>{{ s.location or '—' }}</td>
+                <td>{{ '%.1f'|format(s.N) if s.N else '—' }}</td>
+                <td>{{ '%.1f'|format(s.P) if s.P else '—' }}</td>
+                <td>{{ '%.1f'|format(s.K) if s.K else '—' }}</td>
+                <td>{{ '%.1f'|format(s.pH) if s.pH else '—' }}</td>
+                <td>{{ s.soil_type or '—' }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="profile-empty"><i class="fa-solid fa-flask-vial"></i> No soil tests yet. <a href="/soil">Run your first soil test →</a></p>
+    {% endif %}
+</div>
+
+<!-- ═══ Section 7: Saved Favorites ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-heart"></i> Saved Favorites</h3>
+    </div>
+    {% if fav_mandis %}
+    <div class="profile-fav-grid">
+        {% for m in fav_mandis %}
+        <div class="profile-fav-item">
+            <i class="fa-solid fa-store" style="color:var(--primary);"></i>
+            <div>
+                <strong>{{ m.market }}</strong>
+                <small>{{ m.district }}, {{ m.state }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="profile-empty"><i class="fa-solid fa-store"></i> No saved mandis. <a href="/mandi">Browse mandi prices →</a></p>
+    {% endif %}
+</div>
+
+<!-- ═══ Section 8: Alert Preferences ═══ -->
+<div class="profile-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-bell"></i> Alert Subscriptions</h3>
+        <a href="/alerts" class="btn btn-outline-sm"><i class="fa-solid fa-gear"></i> Manage</a>
+    </div>
+    {% if alert_subs %}
+    <div class="profile-alerts-list">
+        {% for a in alert_subs %}
+        <div class="profile-alert-item">
+            <span class="alert-type-badge {% if a.active %}active{% endif %}">
+                <i class="fa-solid fa-{% if a.alert_type == 'weather' %}cloud-sun{% elif a.alert_type == 'mandi' %}indian-rupee-sign{% else %}bell{% endif %}"></i>
+                {{ a.alert_type|capitalize }}
+            </span>
+            <span class="alert-city">{{ a.city or 'All' }}</span>
+            <span class="alert-status {% if a.active %}on{% else %}off{% endif %}">{{ 'Active' if a.active else 'Off' }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="profile-empty"><i class="fa-solid fa-bell"></i> No alert subscriptions. <a href="/alerts">Set up alerts →</a></p>
+    {% endif %}
+</div>
+
+<!-- ═══ Section 9: Account & Security ═══ -->
+<div class="profile-card profile-security-card">
+    <div class="profile-card-header">
+        <h3><i class="fa-solid fa-shield-halved"></i> Account & Security</h3>
+    </div>
+    <div class="profile-security-actions">
+        <button class="btn btn-outline-sm" onclick="openEditModal('password')"><i class="fa-solid fa-lock"></i> Change Password</button>
+        <button class="btn btn-outline-sm" onclick="exportData()"><i class="fa-solid fa-download"></i> Download My Data</button>
+        <button class="btn btn-danger-outline" onclick="openEditModal('delete')"><i class="fa-solid fa-trash"></i> Delete Account</button>
+    </div>
+</div>
+
+</div><!-- end profile-layout -->
+</section>
+
+<!-- ═══ Edit Modals ═══ -->
+<div class="profile-modal-overlay" id="profileModal" style="display:none;" onclick="if(event.target===this)closeModal()">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h3 id="modalTitle">Edit</h3>
+            <button onclick="closeModal()" class="profile-modal-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="profile-modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PROFILE = {{ profile|tojson }};
+
+// ── Modal system ──
+function openEditModal(type) {
+    const modal = document.getElementById('profileModal');
+    const title = document.getElementById('modalTitle');
+    const body = document.getElementById('modalBody');
+    modal.style.display = 'flex';
+
+    if (type === 'personal') {
+        title.textContent = 'Edit Personal Info';
+        body.innerHTML = `
+            <form id="editPersonalForm" class="profile-form">
+                <div class="form-group"><label>Full Name</label><input type="text" id="editName" value="${esc(PROFILE.name)}" required></div>
+                <div class="form-group"><label>Phone</label><input type="tel" id="editPhone" value="${esc(PROFILE.phone || '')}" placeholder="10-digit phone"></div>
+                <div class="form-group"><label>Language</label>
+                    <select id="editLang"><option value="en" ${PROFILE.lang_pref==='en'?'selected':''}>English</option><option value="hi" ${PROFILE.lang_pref==='hi'?'selected':''}>Hindi</option></select>
+                </div>
+                <div class="form-group"><label>Avatar Color</label><input type="color" id="editColor" value="${PROFILE.avatar_color || '#15803d'}"></div>
+                <button type="submit" class="btn btn-primary btn-full"><i class="fa-solid fa-check"></i> Save Changes</button>
+            </form>`;
+        document.getElementById('editPersonalForm').onsubmit = e => { e.preventDefault(); saveProfile({
+            name: document.getElementById('editName').value,
+            phone: document.getElementById('editPhone').value,
+            lang_pref: document.getElementById('editLang').value,
+            avatar_color: document.getElementById('editColor').value
+        }); };
+    } else if (type === 'farm') {
+        title.textContent = 'Edit Farm Details';
+        body.innerHTML = `
+            <form id="editFarmForm" class="profile-form">
+                <div class="form-row">
+                    <div class="form-group"><label>State</label><input type="text" id="editState" value="${esc(PROFILE.state || '')}"></div>
+                    <div class="form-group"><label>District / City</label><input type="text" id="editDistrict" value="${esc(PROFILE.district || PROFILE.location || '')}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Village</label><input type="text" id="editVillage" value="${esc(PROFILE.village || '')}"></div>
+                    <div class="form-group"><label>Farm Size (hectares)</label><input type="number" id="editLand" step="0.1" min="0" value="${PROFILE.land_ha || 0}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Categories</label>
+                        <select id="editCategory">
+                            <option value="all" ${PROFILE.category==='all'?'selected':''}>Select</option>
+                            <option value="marginal" ${PROFILE.category==='marginal'?'selected':''}>Marginal (&lt;1 ha)</option>
+                            <option value="small" ${PROFILE.category==='small'?'selected':''}>Small (1-2 ha)</option>
+                            <option value="medium" ${PROFILE.category==='medium'?'selected':''}>Medium (2-10 ha)</option>
+                            <option value="large" ${PROFILE.category==='large'?'selected':''}>Large (&gt;10 ha)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Irrigation</label>
+                        <select id="editIrrigation">
+                            <option value="" ${!PROFILE.irrigation?'selected':''}>Select</option>
+                            <option value="Borewell" ${PROFILE.irrigation==='Borewell'?'selected':''}>Borewell</option>
+                            <option value="Canal" ${PROFILE.irrigation==='Canal'?'selected':''}>Canal</option>
+                            <option value="Rainfed" ${PROFILE.irrigation==='Rainfed'?'selected':''}>Rainfed</option>
+                            <option value="Drip" ${PROFILE.irrigation==='Drip'?'selected':''}>Drip</option>
+                            <option value="Sprinkler" ${PROFILE.irrigation==='Sprinkler'?'selected':''}>Sprinkler</option>
+                            <option value="River" ${PROFILE.irrigation==='River'?'selected':''}>River/Pond</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Primary Crops</label><input type="text" id="editCrops" value="${esc(PROFILE.primary_crops || '')}" placeholder="e.g. Wheat, Rice, Sugarcane"></div>
+                    <div class="form-group"><label>Soil Type</label>
+                        <select id="editSoilType">
+                            <option value="" ${!PROFILE.soil_type?'selected':''}>Select</option>
+                            <option value="Alluvial" ${PROFILE.soil_type==='Alluvial'?'selected':''}>Alluvial</option>
+                            <option value="Black" ${PROFILE.soil_type==='Black'?'selected':''}>Black (Regur)</option>
+                            <option value="Red" ${PROFILE.soil_type==='Red'?'selected':''}>Red</option>
+                            <option value="Laterite" ${PROFILE.soil_type==='Laterite'?'selected':''}>Laterite</option>
+                            <option value="Sandy" ${PROFILE.soil_type==='Sandy'?'selected':''}>Sandy</option>
+                            <option value="Clayey" ${PROFILE.soil_type==='Clayey'?'selected':''}>Clayey</option>
+                            <option value="Loamy" ${PROFILE.soil_type==='Loamy'?'selected':''}>Loamy</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full"><i class="fa-solid fa-check"></i> Save Farm Details</button>
+            </form>`;
+        document.getElementById('editFarmForm').onsubmit = e => { e.preventDefault(); saveProfile({
+            state: document.getElementById('editState').value,
+            district: document.getElementById('editDistrict').value,
+            location: document.getElementById('editDistrict').value,
+            village: document.getElementById('editVillage').value,
+            land_ha: document.getElementById('editLand').value,
+            category: document.getElementById('editCategory').value,
+            irrigation: document.getElementById('editIrrigation').value,
+            primary_crops: document.getElementById('editCrops').value,
+            soil_type: document.getElementById('editSoilType').value
+        }); };
+    } else if (type === 'password') {
+        title.textContent = 'Change Password';
+        body.innerHTML = `
+            <form id="editPwForm" class="profile-form">
+                <div class="form-group"><label>Current Password</label><input type="password" id="curPw" required></div>
+                <div class="form-group"><label>New Password (min 6 chars)</label><input type="password" id="newPw" minlength="6" required></div>
+                <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPw" required></div>
+                <button type="submit" class="btn btn-primary btn-full"><i class="fa-solid fa-lock"></i> Update Password</button>
+            </form>`;
+        document.getElementById('editPwForm').onsubmit = async e => {
+            e.preventDefault();
+            const np = document.getElementById('newPw').value;
+            if (np !== document.getElementById('confirmPw').value) return showToast('Passwords do not match', 'error');
+            try {
+                const r = await fetch('/api/profile/password', {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({current_password:document.getElementById('curPw').value, new_password:np})});
+                const d = await r.json();
+                if (!d.success) throw new Error(d.error);
+                showToast('Password updated!', 'success'); closeModal();
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+    } else if (type === 'delete') {
+        title.textContent = 'Delete Account';
+        body.innerHTML = `
+            <div class="profile-delete-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p><strong>This action is permanent.</strong> All your data (predictions, soil tests, forum posts, alerts, favorites) will be permanently deleted.</p>
+            </div>
+            <form id="deleteForm" class="profile-form">
+                <div class="form-group"><label>Enter your password to confirm</label><input type="password" id="deletePw" required></div>
+                <button type="submit" class="btn btn-danger btn-full"><i class="fa-solid fa-trash"></i> Permanently Delete My Account</button>
+            </form>`;
+        document.getElementById('deleteForm').onsubmit = async e => {
+            e.preventDefault();
+            if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+            try {
+                const r = await fetch('/api/profile/delete', {method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password:document.getElementById('deletePw').value})});
+                const d = await r.json();
+                if (!d.success) throw new Error(d.error);
+                window.location.href = '/';
+            } catch(err) { showToast(err.message, 'error'); }
+        };
+    }
+}
+
+function closeModal() { document.getElementById('profileModal').style.display = 'none'; }
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function showToast(msg, type) {
+    if (typeof toast === 'function') return toast(msg, type);
+    alert(msg);
+}
+
+async function saveProfile(fields) {
+    try {
+        const r = await fetch('/api/profile', {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(fields)});
+        const d = await r.json();
+        if (!d.success) throw new Error(d.error);
+        showToast('Profile updated!', 'success');
+        // Update PROFILE obj
+        Object.assign(PROFILE, fields);
+        // Update display
+        if (fields.name) {
+            document.getElementById('dispName').textContent = fields.name;
+            document.getElementById('profileAvatar').querySelector('span').textContent = fields.name.substring(0,2).toUpperCase();
+        }
+        if (fields.avatar_color) document.getElementById('profileAvatar').style.background = fields.avatar_color;
+        if (fields.state !== undefined) document.getElementById('dispState').textContent = fields.state || '—';
+        if (fields.district !== undefined) document.getElementById('dispDistrict').textContent = fields.district || '—';
+        if (fields.village !== undefined) document.getElementById('dispVillage').textContent = fields.village || '—';
+        if (fields.land_ha !== undefined) document.getElementById('dispLandHa').textContent = (fields.land_ha || 0) + ' hectares';
+        if (fields.category !== undefined) document.getElementById('dispCategory').textContent = fields.category !== 'all' ? fields.category.charAt(0).toUpperCase()+fields.category.slice(1) : '—';
+        if (fields.primary_crops !== undefined) document.getElementById('dispCrops').textContent = fields.primary_crops || '—';
+        if (fields.irrigation !== undefined) document.getElementById('dispIrrigation').textContent = fields.irrigation || '—';
+        if (fields.soil_type !== undefined) document.getElementById('dispSoilType').textContent = fields.soil_type || '—';
+        if (fields.lang_pref) localStorage.setItem('lang', fields.lang_pref);
+        closeModal();
+    } catch(err) { showToast(err.message, 'error'); }
+}
+
+async function exportData() {
+    try {
+        const r = await fetch('/api/profile/export');
+        const d = await r.json();
+        if (!d.success) throw new Error(d.error);
+        const blob = new Blob([JSON.stringify(d.data, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `kisan-salahkar-data-${PROFILE.username}.json`;
+        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        showToast('Data downloaded!', 'success');
+    } catch(err) { showToast(err.message, 'error'); }
+}
+</script>
+{% endblock %}

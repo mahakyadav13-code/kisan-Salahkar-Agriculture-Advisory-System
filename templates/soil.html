@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Soil Testing — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<section class="hero-crop-v2 hero-soil">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Soil Test</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#92400e,#d97706);"><i class="fa-solid fa-flask-vial"></i></div>
+        <h1><span data-i18n="soilTitle">Soil Testing &amp; Analysis</span></h1>
+        <p data-i18n="soilSubtitle">Enter soil test data for nutrient recommendations or lookup your report</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-vials"></i> <span data-i18n="soilStat1">8 Nutrients</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-file-medical"></i> <span data-i18n="soilStat2">Lab Reports</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-robot"></i> <span data-i18n="soilStat3">AI Analysis</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-indian-rupee-sign"></i> <span data-i18n="soilStat4">Free Testing</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="crop-layout">
+        <!-- Report Lookup -->
+        <div class="crop-form-card">
+            <h2><i class="fa-solid fa-search"></i> <span data-i18n="soilLookup">Lookup Soil Report</span></h2>
+            <form id="soilLookupForm">
+                <div class="input-group">
+                    <label data-i18n="soilReportId">Soil Health Card Report ID</label>
+                    <input type="text" id="reportId" placeholder="e.g. SHC-A12B34CD">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-search"></i> <span data-i18n="soilLookupBtn">Find Report</span>
+                </button>
+            </form>
+
+            <hr style="margin:1.5rem 0; border-color:#e0e6e0;">
+
+            <h2><i class="fa-solid fa-pen-ruler"></i> <span data-i18n="soilManual">Enter Soil Data Manually</span></h2>
+            <form id="soilForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label data-i18n="soilLblN">Nitrogen (N) <small>kg/ha</small></label>
+                        <input type="number" id="soilN" min="0" max="800" step="1" placeholder="e.g. 240" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblP">Phosphorus (P) <small>kg/ha</small></label>
+                        <input type="number" id="soilP" min="0" max="200" step="0.1" placeholder="e.g. 18" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblK">Potassium (K) <small>kg/ha</small></label>
+                        <input type="number" id="soilK" min="0" max="500" step="1" placeholder="e.g. 200" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblPH">Soil pH</label>
+                        <input type="number" id="soilPH" min="3" max="10" step="0.1" placeholder="e.g. 6.5" required>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblEC">EC <small>dS/m</small></label>
+                        <input type="number" id="soilEC" min="0" max="10" step="0.01" placeholder="e.g. 0.5">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblOC">Organic Carbon <small>%</small></label>
+                        <input type="number" id="soilOC" min="0" max="5" step="0.01" placeholder="e.g. 0.6">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblS">Sulphur (S) <small>ppm</small></label>
+                        <input type="number" id="soilS" min="0" max="100" step="0.1" placeholder="e.g. 12">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLblZn">Zinc (Zn) <small>ppm</small></label>
+                        <input type="number" id="soilZn" min="0" max="20" step="0.01" placeholder="e.g. 0.8">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilType">Soil Type</label>
+                        <select id="soilType">
+                            <option value="">Select...</option>
+                            <option value="alluvial">Alluvial (जलोढ़)</option>
+                            <option value="black">Black / Regur (काली मिट्टी)</option>
+                            <option value="red">Red Soil (लाल मिट्टी)</option>
+                            <option value="laterite">Laterite (लैटेराइट)</option>
+                            <option value="sandy">Sandy (रेतीली)</option>
+                            <option value="clay">Clay (चिकनी)</option>
+                            <option value="loam">Loam (दोमट)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="soilLocation">Location / Village</label>
+                        <input type="text" id="soilLocation" placeholder="e.g. Rampur, UP">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> <span data-i18n="soilAnalyze">Analyze Soil</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Results -->
+        <div class="crop-result-card" id="soilResult" style="display:none;">
+            <h2><i class="fa-solid fa-clipboard-check"></i> <span data-i18n="soilResultTitle">Soil Analysis Report</span></h2>
+            <div id="soilReportId" class="soil-report-id"></div>
+            <div id="soilRecommendations"></div>
+
+            <div class="soil-guide">
+                <h3><i class="fa-solid fa-info-circle"></i> <span data-i18n="soilGuide">How to Get Soil Tested</span></h3>
+                <ol class="soil-steps">
+                    <li data-i18n="soilStep1">Visit your nearest Krishi Vigyan Kendra (KVK) or Agriculture Department office</li>
+                    <li data-i18n="soilStep2">Collect soil sample from 6-8 spots at 15cm depth, mix well</li>
+                    <li data-i18n="soilStep3">Take about 500g sample in a clean bag with your details</li>
+                    <li data-i18n="soilStep4">Submit to the lab — results in 2-3 weeks (FREE under Soil Health Card scheme)</li>
+                    <li data-i18n="soilStep5">Enter your Soil Health Card number above to get recommendations</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Soil Health Guide (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-amber">
+        <i class="fa-solid fa-earth-asia"></i>
+        <div><strong data-i18n="soilHealthTitle">Healthy Soil = Healthy Crops:</strong> <span data-i18n="soilHealthDesc">Get your soil tested every 2 years. The Soil Health Card scheme provides free testing at government labs. Call <strong>1800-180-1551</strong> (toll-free) for nearest center.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-vials"></i>
+        <h3 data-i18n="soilNutrientTitle">Understand Your Soil Nutrients</h3>
+        <small data-i18n="soilNutrientSub">Ideal ranges for healthy crops</small>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-n"></i></div>
+            <h4 data-i18n="soilNTitle">Nitrogen (N)</h4>
+            <p data-i18n="soilNDesc"><strong>Ideal: 250-500 kg/ha</strong> — Essential for leaf growth. Low N causes yellowing. Add urea or green manure.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#ffedd5; color:#c2410c;"><i class="fa-solid fa-p"></i></div>
+            <h4 data-i18n="soilPTitle">Phosphorus (P)</h4>
+            <p data-i18n="soilPDesc"><strong>Ideal: 10-25 kg/ha</strong> — Needed for root development &amp; flowering. Use DAP or bone meal for deficiency.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#f3e8ff; color:#7c3aed;"><i class="fa-solid fa-k"></i></div>
+            <h4 data-i18n="soilKTitle">Potassium (K)</h4>
+            <p data-i18n="soilKDesc"><strong>Ideal: 110-280 kg/ha</strong> — Strengthens stems &amp; disease resistance. Apply MOP (Muriate of Potash) if low.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dbeafe; color:#1d4ed8;"><i class="fa-solid fa-vial"></i></div>
+            <h4 data-i18n="soilPHTitle">Soil pH</h4>
+            <p data-i18n="soilPHDesc"><strong>Ideal: 6.0-7.5</strong> — Too acidic? Add lime. Too alkaline? Add gypsum or sulphur. Most crops prefer neutral pH.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,106 @@
+﻿{% extends "base.html" %}
+{% block title %}Agriculture Information  Kisan Salahkar{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-crop-v2 hero-info">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1400&h=400&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Agri Info</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#15803d,#059669);"><i class="fa-solid fa-book-open"></i></div>
+        <h1><span data-i18n="infoTitle">Agriculture Information</span></h1>
+        <p data-i18n="infoSubtitle">Resources, tips &amp; government schemes for modern farming</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-book"></i> 6 Categories</span>
+            <span class="hero-stat"><i class="fa-solid fa-language"></i> Hindi / English</span>
+            <span class="hero-stat"><i class="fa-solid fa-graduation-cap"></i> Expert Curated</span>
+            <span class="hero-stat"><i class="fa-solid fa-arrows-rotate"></i> Updated Regularly</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="info-grid">
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-landmark"></i>
+                <h3 data-i18n="infoGovt">Government Schemes</h3>
+            </div>
+            <div class="info-body"><ul id="govtItems"></ul></div>
+        </div>
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-bugs"></i>
+                <h3 data-i18n="infoPest">Pest &amp; Disease Control</h3>
+            </div>
+            <div class="info-body"><ul id="pestItems"></ul></div>
+        </div>
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-tractor"></i>
+                <h3 data-i18n="infoModern">Modern Farming Techniques</h3>
+            </div>
+            <div class="info-body"><ul id="modernItems"></ul></div>
+        </div>
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-mountain-sun"></i>
+                <h3 data-i18n="infoSoil">Soil Health Management</h3>
+            </div>
+            <div class="info-body"><ul id="soilItems"></ul></div>
+        </div>
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-faucet-drip"></i>
+                <h3 data-i18n="infoIrrigation">Irrigation Tips</h3>
+            </div>
+            <div class="info-body"><ul id="irrigationItems"></ul></div>
+        </div>
+
+        <div class="info-block">
+            <div class="info-header">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3 data-i18n="infoMarket">Market &amp; Pricing</h3>
+            </div>
+            <div class="info-body"><ul id="marketItems"></ul></div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Useful Resources & Helplines (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-green">
+        <i class="fa-solid fa-phone"></i>
+        <div><strong>Farmer Helplines:</strong> Kisan Call Center: <strong>1800-180-1551</strong> (toll-free, 6AM-10PM) | PM-KISAN Helpline: <strong>155261</strong> | mKisan App for SMS advisory in your language.</div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-link"></i>
+        <h3>Useful Government Resources</h3>
+        <small>Official portals for Indian farmers</small>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-globe"></i></div>
+            <h4>Farmer Portal</h4>
+            <p>Visit <a href="https://farmer.gov.in" target="_blank" rel="noopener">farmer.gov.in</a> — one-stop shop for all agriculture information, weather, market prices &amp; scheme details.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-file-invoice"></i></div>
+            <h4>Soil Health Card</h4>
+            <p>Check your soil health report at <a href="https://soilhealth.dac.gov.in" target="_blank" rel="noopener">soilhealth.dac.gov.in</a> — get nutrient status &amp; fertilizer recommendations.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dbeafe; color:#1e40af;"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h4>ICAR Knowledge</h4>
+            <p>Access research papers, crop guides &amp; training materials from <a href="https://icar.org.in" target="_blank" rel="noopener">Indian Council of Agricultural Research</a>.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

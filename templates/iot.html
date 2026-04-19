@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}IoT Sensor Dashboard — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-crop-v2 hero-iot">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>IoT Sensors</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fa-solid fa-microchip"></i></div>
+        <h1><span data-i18n="iotTitle">IoT Sensor Dashboard</span></h1>
+        <p data-i18n="iotSubtitle">Real-time sensor readings from your farm — ESP32 + WiFi</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-microchip"></i> <span data-i18n="iotStatESP">ESP32</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-gauge-high"></i> <span data-i18n="iotStat2">4 Sensors</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-bolt"></i> <span data-i18n="iotStat3">Real-Time</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-wifi"></i> <span data-i18n="iotStat4">WiFi</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+
+    <!-- Device Status Bar -->
+    <div class="iot-status-bar" id="iotStatusBar">
+        <div class="iot-status-chip" id="deviceStatusChip">
+            <span class="iot-pulse" id="iotPulse"></span>
+            <i class="fa-solid fa-microchip"></i>
+            <span id="deviceStatusText" data-i18n="iotConnecting">Connecting...</span>
+        </div>
+        <div class="iot-status-meta">
+            <span id="lastUpdateTime"><i class="fa-regular fa-clock"></i> --:--</span>
+            <span id="wifiSignal"><i class="fa-solid fa-wifi"></i> --</span>
+            <span id="batteryLevel"><i class="fa-solid fa-battery-half"></i> --</span>
+        </div>
+        <button class="btn btn-sm btn-outline" onclick="refreshSensorData()">
+            <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="iotRefresh">Refresh</span>
+        </button>
+    </div>
+
+    <!-- Live Sensor Gauges -->
+    <div class="iot-gauges-grid">
+        <!-- Temperature -->
+        <div class="iot-gauge-card" id="gaugeTemp">
+            <div class="iot-gauge-icon" style="background:linear-gradient(135deg,#ef4444,#f97316);">
+                <i class="fa-solid fa-temperature-half"></i>
+            </div>
+            <div class="iot-gauge-body">
+                <span class="iot-gauge-label" data-i18n="iotTemp">Temperature</span>
+                <span class="iot-gauge-value" id="valTemp">--</span>
+                <span class="iot-gauge-unit">°C</span>
+                <div class="iot-gauge-bar">
+                    <div class="iot-gauge-bar-fill" id="barTemp" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Humidity -->
+        <div class="iot-gauge-card" id="gaugeHumidity">
+            <div class="iot-gauge-icon" style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
+                <i class="fa-solid fa-droplet"></i>
+            </div>
+            <div class="iot-gauge-body">
+                <span class="iot-gauge-label" data-i18n="iotHumidity">Humidity</span>
+                <span class="iot-gauge-value" id="valHumidity">--</span>
+                <span class="iot-gauge-unit">%</span>
+                <div class="iot-gauge-bar">
+                    <div class="iot-gauge-bar-fill" id="barHumidity" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Soil Moisture -->
+        <div class="iot-gauge-card" id="gaugeMoisture">
+            <div class="iot-gauge-icon" style="background:linear-gradient(135deg,#10b981,#14b8a6);">
+                <i class="fa-solid fa-water"></i>
+            </div>
+            <div class="iot-gauge-body">
+                <span class="iot-gauge-label" data-i18n="iotMoisture">Soil Moisture</span>
+                <span class="iot-gauge-value" id="valMoisture">--</span>
+                <span class="iot-gauge-unit">%</span>
+                <div class="iot-gauge-bar">
+                    <div class="iot-gauge-bar-fill" id="barMoisture" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+        <!-- pH -->
+        <div class="iot-gauge-card" id="gaugePH">
+            <div class="iot-gauge-icon" style="background:linear-gradient(135deg,#f59e0b,#eab308);">
+                <i class="fa-solid fa-flask-vial"></i>
+            </div>
+            <div class="iot-gauge-body">
+                <span class="iot-gauge-label" data-i18n="iotPH">Soil pH</span>
+                <span class="iot-gauge-value" id="valPH">--</span>
+                <span class="iot-gauge-unit">pH</span>
+                <div class="iot-gauge-bar">
+                    <div class="iot-gauge-bar-fill" id="barPH" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sensor Advisories -->
+    <div class="iot-advisories" id="iotAdvisories" style="display:none;">
+        <h3><i class="fa-solid fa-lightbulb"></i> <span data-i18n="iotAdvisories">Smart Advisories</span></h3>
+        <div class="iot-advisory-list" id="advisoryList"></div>
+    </div>
+
+    <!-- History Chart -->
+    <div class="iot-chart-section">
+        <div class="iot-chart-header">
+            <h3><i class="fa-solid fa-chart-line"></i> <span data-i18n="iotHistory">Sensor History</span></h3>
+            <div class="iot-chart-controls">
+                <button class="btn btn-sm btn-outline active" onclick="loadHistory(6, this)" data-i18n="iot6h">6 Hours</button>
+                <button class="btn btn-sm btn-outline" onclick="loadHistory(12, this)" data-i18n="iot12h">12 Hours</button>
+                <button class="btn btn-sm btn-outline" onclick="loadHistory(24, this)" data-i18n="iot24h">24 Hours</button>
+                <button class="btn btn-sm btn-outline" onclick="loadHistory(72, this)" data-i18n="iot3d">3 Days</button>
+            </div>
+        </div>
+        <div class="iot-chart-container">
+            <canvas id="sensorHistoryChart" height="300"></canvas>
+        </div>
+        <p class="iot-chart-empty" id="chartEmpty" style="display:none;">
+            <i class="fa-solid fa-chart-line"></i> <span data-i18n="iotNoData">No history data yet. Data will appear after your ESP32 starts sending readings.</span>
+        </p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="iot-actions-grid">
+        <button class="iot-action-card" onclick="autoFillFromSensors()">
+            <i class="fa-solid fa-fill-drip"></i>
+            <span data-i18n="iotAutoFill">Auto-Fill Crop Form</span>
+            <small data-i18n="iotAutoFillDesc">Use sensor data in crop recommendation</small>
+        </button>
+        <a href="/crop" class="iot-action-card">
+            <i class="fa-solid fa-seedling"></i>
+            <span data-i18n="iotGoCrop">Crop Advice</span>
+            <small data-i18n="iotGoCropDesc">Get AI crop recommendation</small>
+        </a>
+        <a href="/weather" class="iot-action-card">
+            <i class="fa-solid fa-cloud-sun"></i>
+            <span data-i18n="iotGoWeather">Check Weather</span>
+            <small data-i18n="iotGoWeatherDesc">Compare sensor vs forecast</small>
+        </a>
+        <a href="/soil" class="iot-action-card">
+            <i class="fa-solid fa-flask-vial"></i>
+            <span data-i18n="iotGoSoil">Soil Report</span>
+            <small data-i18n="iotGoSoilDesc">Full soil health analysis</small>
+        </a>
+    </div>
+
+    <!-- Setup Guide (shown when no data) -->
+    <div class="iot-setup-guide" id="iotSetupGuide" style="display:none;">
+        <h3><i class="fa-solid fa-plug-circle-bolt"></i> <span data-i18n="iotSetup">Hardware Setup Guide</span></h3>
+        <div class="iot-setup-steps">
+            <div class="iot-setup-step">
+                <div class="step-num">1</div>
+                <div>
+                    <strong data-i18n="iotStep1Title">Flash ESP32 Firmware</strong>
+                    <p data-i18n="iotStep1Desc">Open <code>hardware/kisan_esp32_sensors.ino</code> in Arduino IDE, set your WiFi SSID & password, and upload to ESP32.</p>
+                </div>
+            </div>
+            <div class="iot-setup-step">
+                <div class="step-num">2</div>
+                <div>
+                    <strong data-i18n="iotStep2Title">Wire Sensors</strong>
+                    <p data-i18n="iotStep2Desc">DHT11 → GPIO 4 &nbsp;|&nbsp; Soil Moisture → GPIO 34 &nbsp;|&nbsp; pH Sensor → GPIO 35 &nbsp;|&nbsp; Power via 18650 batteries.</p>
+                </div>
+            </div>
+            <div class="iot-setup-step">
+                <div class="step-num">3</div>
+                <div>
+                    <strong data-i18n="iotStep3Title">Set Server IP</strong>
+                    <p data-i18n="iotStep3Desc">In the firmware, change <code>SERVER_URL</code> to your computer's IP address (e.g., <code>http://192.168.1.100:5000</code>).</p>
+                </div>
+            </div>
+            <div class="iot-setup-step">
+                <div class="step-num">4</div>
+                <div>
+                    <strong data-i18n="iotStep4Title">Power On & Watch</strong>
+                    <p data-i18n="iotStep4Desc">Power on the ESP32. Data will appear here automatically every 30 seconds!</p>
+                </div>
+            </div>
+        </div>
+        <!-- Wiring Diagram (text-based) -->
+        <div class="iot-wiring-box">
+            <h4><i class="fa-solid fa-diagram-project"></i> Wiring Diagram</h4>
+            <pre class="iot-wiring-pre">
+┌──────────────┐
+│    ESP32     │
+│              │
+│  GPIO 4  ────── DHT11 (DATA pin)
+│  GPIO 34 ────── Soil Moisture (AO pin)
+│  GPIO 35 ────── pH Sensor (AO pin)
+│  3.3V    ────── Sensor VCC (all)
+│  GND     ────── Sensor GND (all)
+│  VIN     ────── 18650 Battery + (via holder)
+│  GND     ────── 18650 Battery − (via holder)
+└──────────────┘
+
+DHT11: VCC → 3.3V | DATA → GPIO4 | GND → GND
+Moisture: VCC → 3.3V | AO → GPIO34 | GND → GND
+pH: VCC → 3.3V | AO → GPIO35 | GND → GND
+            </pre>
+        </div>
+    </div>
+
+</section>
+
+<!-- Sensor Threshold Guide (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-green">
+        <i class="fa-solid fa-gauge-high"></i>
+        <div><strong data-i18n="iotSensorTipTitle">Sensor Health Tip:</strong> <span data-i18n="iotSensorTipDesc">Clean your soil moisture sensor every 2 weeks to avoid corrosion. DHT11 accuracy is ±2°C — calibrate against a mercury thermometer monthly for best results.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-sliders"></i>
+        <h3 data-i18n="iotRangeTitle">Ideal Sensor Ranges for Farming</h3>
+        <small data-i18n="iotRangeSub">When to take action</small>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef2f2; color:#ef4444;"><i class="fa-solid fa-temperature-half"></i></div>
+            <h4 data-i18n="iotRangeTemp">Temperature</h4>
+            <p data-i18n-html="iotRangeTempDesc"><span class="badge-pill badge-green">20-35°C</span> Ideal for most crops.<br><span class="badge-pill badge-amber">&gt;38°C</span> Heat stress alert.<br><span class="badge-pill badge-blue">&lt;10°C</span> Frost risk — cover seedlings.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dbeafe; color:#3b82f6;"><i class="fa-solid fa-droplet"></i></div>
+            <h4 data-i18n="iotRangeHum">Humidity</h4>
+            <p data-i18n-html="iotRangeHumDesc"><span class="badge-pill badge-green">50-80%</span> Optimal range.<br><span class="badge-pill badge-amber">&gt;85%</span> Fungal disease risk — improve ventilation.<br><span class="badge-pill badge-red">&lt;30%</span> Increase irrigation frequency.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#ecfdf5; color:#10b981;"><i class="fa-solid fa-water"></i></div>
+            <h4 data-i18n="iotRangeMoist">Soil Moisture</h4>
+            <p data-i18n-html="iotRangeMoistDesc"><span class="badge-pill badge-green">40-70%</span> Healthy for most crops.<br><span class="badge-pill badge-red">&lt;20%</span> Urgent irrigation needed.<br><span class="badge-pill badge-amber">&gt;85%</span> Waterlogging — improve drainage.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef3c7; color:#f59e0b;"><i class="fa-solid fa-flask-vial"></i></div>
+            <h4 data-i18n="iotRangePH">Soil pH</h4>
+            <p data-i18n-html="iotRangePHDesc"><span class="badge-pill badge-green">6.0-7.5</span> Ideal for most crops.<br><span class="badge-pill badge-amber">&lt;5.5</span> Too acidic — add agricultural lime.<br><span class="badge-pill badge-blue">&gt;8.0</span> Too alkaline — add gypsum/sulphur.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

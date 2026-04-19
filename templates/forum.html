@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Community Forum — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<section class="hero-crop-v2 hero-forum">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Forum</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);"><i class="fa-solid fa-comments"></i></div>
+        <h1><span data-i18n="forumTitle">Farmer Community Forum</span></h1>
+        <p data-i18n="forumSub">Ask questions, share farming experiences &amp; connect with fellow farmers</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-users"></i> <span data-i18n="frmStat1">Community</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-tags"></i> <span data-i18n="frmStat2">6 Categories</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-user-graduate"></i> <span data-i18n="frmStat3">Expert Help</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-heart"></i> <span data-i18n="frmStat4">Free</span></span>
+        </div>
+    </div>
+</section>
+
+
+<section class="section">
+    <!-- New Post Form -->
+    <div class="forum-new-post">
+        <h2><i class="fa-solid fa-pen-to-square"></i> <span data-i18n="forumNewPost">Ask a Question / Share</span></h2>
+        <form id="forumPostForm">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label data-i18n="forumPostTitle">Title</label>
+                    <input type="text" id="postTitle" placeholder="What's your question?" required>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="forumCategory">Category</label>
+                    <select id="postCategory">
+                        <option value="general">General (सामान्य)</option>
+                        <option value="crop">Crop Issues (फसल समस्या)</option>
+                        <option value="pest">Pest/Disease (कीट/रोग)</option>
+                        <option value="market">Market/Selling (बाज़ार)</option>
+                        <option value="govt">Govt Schemes (सरकारी योजना)</option>
+                        <option value="equipment">Equipment (उपकरण)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group" style="margin-top:.5rem;">
+                <label data-i18n="forumContent">Details</label>
+                <textarea id="postContent" rows="4" placeholder="Describe your question or experience in detail..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="forumSubmit">Post</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="forum-filters">
+        <button class="filter-btn active" data-cat="" data-i18n="forumAll">All</button>
+        <button class="filter-btn" data-cat="crop">🌾 <span data-i18n="forumCatCrop">Crop</span></button>
+        <button class="filter-btn" data-cat="pest">🐛 <span data-i18n="forumCatPest">Pest</span></button>
+        <button class="filter-btn" data-cat="market">💰 <span data-i18n="forumCatMarket">Market</span></button>
+        <button class="filter-btn" data-cat="govt">🏛️ <span data-i18n="forumCatGovt">Schemes</span></button>
+        <button class="filter-btn" data-cat="general">💬 <span data-i18n="forumCatGeneral">General</span></button>
+    </div>
+
+    <!-- Posts List -->
+    <div id="forumPosts" class="forum-posts"></div>
+</section>
+
+<!-- Community Guidelines (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-green">
+        <i class="fa-solid fa-handshake"></i>
+        <div><strong data-i18n="frmGuideTitle">Community Guidelines:</strong> <span data-i18n="frmGuideDesc">Be respectful to fellow farmers. Share verified information only. Include your crop name, location &amp; season when asking questions — it helps others give better answers.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-fire-flame-curved"></i>
+        <h3 data-i18n="frmPopularTitle">Popular Discussion Topics</h3>
+        <small data-i18n="frmPopularSub">What farmers are talking about</small>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-droplet"></i></div>
+            <h4 data-i18n="frmIrrigTitle">Irrigation Management</h4>
+            <p data-i18n="frmIrrigDesc">Drip vs sprinkler irrigation, water scheduling, bore well tips — join the discussion on water conservation.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#fef3c7; color:#92400e;"><i class="fa-solid fa-leaf"></i></div>
+            <h4 data-i18n="frmOrganicTitle">Organic Farming</h4>
+            <p data-i18n="frmOrganicDesc">Natural pesticides, composting methods, organic certification — share your chemical-free farming journey.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon" style="background:#dbeafe; color:#1e40af;"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+            <h4 data-i18n="frmSellTitle">Where to Sell Better?</h4>
+            <p data-i18n="frmSellDesc">e-NAM, FPO marketing, direct-to-consumer tips — learn how other farmers get better prices.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Reply Modal -->
+<div id="replyModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-reply"></i> <span data-i18n="forumReply">Reply</span></h3>
+            <button class="modal-close" onclick="closeReplyModal()">&times;</button>
+        </div>
+        <div id="replyPostContent" class="reply-original"></div>
+        <div id="repliesList" class="replies-list"></div>
+        <form id="replyForm">
+            <input type="hidden" id="replyPostId">
+            <div class="input-group">
+                <textarea id="replyContent" rows="3" placeholder="Write your reply..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="forumSendReply">Send Reply</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,219 @@
+{
+  "Andhra Pradesh": {
+    "Guntur": ["Rice", "Cotton", "Chili"],
+    "Krishna": ["Rice", "Sugarcane", "Cotton"],
+    "Kurnool": ["Cotton", "Groundnut", "Rice"],
+    "East Godavari": ["Rice", "Coconut", "Banana"],
+    "West Godavari": ["Rice", "Maize", "Cotton"],
+    "Anantapur": ["Groundnut", "Rice", "Cotton"],
+    "Chittoor": ["Mango", "Groundnut", "Rice"],
+    "Visakhapatnam": ["Rice", "Sugarcane", "Banana"],
+    "Prakasam": ["Rice", "Cotton", "Chili"],
+    "Nellore": ["Rice", "Groundnut", "Sugarcane"]
+  },
+  "Assam": {
+    "Kamrup": ["Rice", "Jute", "Potato"],
+    "Nagaon": ["Rice", "Jute", "Tea"],
+    "Dibrugarh": ["Tea", "Rice"],
+    "Jorhat": ["Tea", "Rice"],
+    "Sonitpur": ["Rice", "Tea", "Potato"],
+    "Cachar": ["Rice", "Jute"]
+  },
+  "Bihar": {
+    "Patna": ["Rice", "Wheat", "Maize", "Lentil"],
+    "Muzaffarpur": ["Rice", "Wheat", "Banana", "Lentil"],
+    "Gaya": ["Rice", "Wheat", "Chickpea", "Lentil"],
+    "Bhagalpur": ["Rice", "Wheat", "Maize"],
+    "Purnia": ["Rice", "Maize", "Jute"],
+    "Darbhanga": ["Rice", "Wheat", "Maize"],
+    "Nalanda": ["Rice", "Wheat", "Potato"],
+    "Vaishali": ["Rice", "Wheat", "Banana"]
+  },
+  "Chhattisgarh": {
+    "Raipur": ["Rice", "Wheat", "Chickpea"],
+    "Durg": ["Rice", "Wheat", "Soybean"],
+    "Bilaspur": ["Rice", "Wheat", "Lentil"],
+    "Bastar": ["Rice", "Maize"]
+  },
+  "Gujarat": {
+    "Rajkot": ["Cotton", "Groundnut", "Bajra"],
+    "Ahmedabad": ["Cotton", "Wheat", "Bajra"],
+    "Junagadh": ["Groundnut", "Cotton", "Wheat"],
+    "Surat": ["Sugarcane", "Cotton", "Rice", "Banana"],
+    "Banaskantha": ["Bajra", "Cumin", "Wheat"],
+    "Kutch": ["Bajra", "Cotton", "Groundnut"],
+    "Mehsana": ["Wheat", "Cotton", "Bajra"],
+    "Vadodara": ["Cotton", "Rice", "Wheat"],
+    "Bhavnagar": ["Cotton", "Groundnut", "Bajra"]
+  },
+  "Haryana": {
+    "Karnal": ["Wheat", "Rice", "Sugarcane"],
+    "Hisar": ["Wheat", "Cotton", "Bajra", "Mustard"],
+    "Sirsa": ["Cotton", "Wheat", "Rice"],
+    "Ambala": ["Wheat", "Rice", "Sugarcane"],
+    "Rohtak": ["Wheat", "Bajra", "Mustard"],
+    "Sonipat": ["Wheat", "Rice", "Sugarcane"],
+    "Panipat": ["Wheat", "Rice"],
+    "Kurukshetra": ["Wheat", "Rice"]
+  },
+  "Himachal Pradesh": {
+    "Shimla": ["Wheat", "Maize", "Potato"],
+    "Kangra": ["Wheat", "Rice", "Maize", "Tea"],
+    "Mandi": ["Wheat", "Maize", "Rice"],
+    "Kullu": ["Wheat", "Maize", "Potato"],
+    "Solan": ["Wheat", "Maize", "Potato"]
+  },
+  "Jharkhand": {
+    "Ranchi": ["Rice", "Wheat", "Maize", "Potato"],
+    "Dhanbad": ["Rice", "Wheat", "Potato"],
+    "Hazaribagh": ["Rice", "Wheat", "Lentil"],
+    "Dumka": ["Rice", "Wheat", "Maize"]
+  },
+  "Karnataka": {
+    "Bengaluru Rural": ["Maize", "Rice", "Groundnut"],
+    "Mysuru": ["Rice", "Sugarcane", "Coconut"],
+    "Belagavi": ["Sugarcane", "Maize", "Cotton"],
+    "Dharwad": ["Cotton", "Maize", "Groundnut"],
+    "Davangere": ["Maize", "Cotton", "Rice"],
+    "Hassan": ["Coffee", "Rice", "Coconut"],
+    "Kodagu": ["Coffee", "Rice"],
+    "Shimoga": ["Rice", "Maize", "Coconut"],
+    "Raichur": ["Rice", "Cotton", "Groundnut"],
+    "Tumkur": ["Coconut", "Groundnut", "Maize"]
+  },
+  "Kerala": {
+    "Palakkad": ["Rice", "Coconut"],
+    "Thrissur": ["Rice", "Coconut", "Banana"],
+    "Wayanad": ["Coffee", "Tea", "Rice"],
+    "Idukki": ["Tea", "Coffee", "Rubber"],
+    "Ernakulam": ["Rice", "Coconut", "Rubber"],
+    "Kottayam": ["Rubber", "Rice", "Coconut"],
+    "Kannur": ["Coconut", "Rice"]
+  },
+  "Madhya Pradesh": {
+    "Bhopal": ["Wheat", "Chickpea", "Lentil", "Soybean"],
+    "Indore": ["Wheat", "Soybean", "Maize"],
+    "Jabalpur": ["Wheat", "Rice", "Lentil", "Chickpea"],
+    "Gwalior": ["Wheat", "Mustard", "Lentil"],
+    "Ujjain": ["Wheat", "Soybean", "Chickpea"],
+    "Sagar": ["Wheat", "Chickpea", "Lentil"],
+    "Rewa": ["Wheat", "Rice", "Lentil"],
+    "Dewas": ["Soybean", "Wheat", "Cotton"]
+  },
+  "Maharashtra": {
+    "Nashik": ["Onion", "Maize", "Sugarcane", "Groundnut"],
+    "Nagpur": ["Cotton", "Soybean", "Rice"],
+    "Pune": ["Sugarcane", "Maize", "Soybean", "Onion"],
+    "Kolhapur": ["Sugarcane", "Rice", "Groundnut"],
+    "Aurangabad": ["Cotton", "Maize", "Soybean"],
+    "Solapur": ["Sugarcane", "Groundnut", "Cotton"],
+    "Latur": ["Soybean", "Cotton", "Chickpea"],
+    "Jalgaon": ["Cotton", "Banana", "Maize"],
+    "Sangli": ["Sugarcane", "Groundnut", "Maize"],
+    "Ahmednagar": ["Sugarcane", "Onion", "Maize"]
+  },
+  "Odisha": {
+    "Cuttack": ["Rice", "Jute", "Sugarcane"],
+    "Puri": ["Rice", "Groundnut", "Coconut"],
+    "Sambalpur": ["Rice", "Cotton", "Maize"],
+    "Balasore": ["Rice", "Groundnut", "Jute"],
+    "Ganjam": ["Rice", "Sugarcane", "Cotton"],
+    "Koraput": ["Rice", "Maize"]
+  },
+  "Punjab": {
+    "Ludhiana": ["Wheat", "Rice", "Cotton"],
+    "Amritsar": ["Wheat", "Rice", "Maize"],
+    "Patiala": ["Wheat", "Rice", "Sugarcane"],
+    "Bathinda": ["Cotton", "Wheat", "Rice"],
+    "Jalandhar": ["Wheat", "Rice", "Potato"],
+    "Ferozepur": ["Wheat", "Rice", "Cotton"],
+    "Moga": ["Wheat", "Rice", "Cotton"],
+    "Sangrur": ["Wheat", "Rice", "Cotton"]
+  },
+  "Rajasthan": {
+    "Jaipur": ["Wheat", "Bajra", "Chickpea", "Mustard"],
+    "Kota": ["Wheat", "Chickpea", "Soybean"],
+    "Jodhpur": ["Bajra", "Cumin", "Mustard"],
+    "Udaipur": ["Maize", "Wheat", "Soybean"],
+    "Bikaner": ["Bajra", "Cumin", "Mustard"],
+    "Alwar": ["Wheat", "Mustard", "Bajra"],
+    "Bharatpur": ["Wheat", "Mustard", "Bajra"],
+    "Ganganagar": ["Wheat", "Cotton", "Mustard"],
+    "Sikar": ["Bajra", "Wheat", "Chickpea"],
+    "Chittorgarh": ["Maize", "Wheat", "Soybean"]
+  },
+  "Tamil Nadu": {
+    "Thanjavur": ["Rice", "Sugarcane", "Banana"],
+    "Coimbatore": ["Cotton", "Maize", "Coconut"],
+    "Madurai": ["Rice", "Cotton", "Banana"],
+    "Salem": ["Rice", "Maize", "Groundnut"],
+    "Tirunelveli": ["Rice", "Banana", "Coconut"],
+    "Erode": ["Cotton", "Sugarcane", "Coconut"],
+    "Dindigul": ["Rice", "Maize", "Banana"],
+    "Tiruchirappalli": ["Rice", "Maize", "Banana"]
+  },
+  "Telangana": {
+    "Hyderabad": ["Rice", "Maize"],
+    "Warangal": ["Rice", "Cotton", "Chili"],
+    "Karimnagar": ["Rice", "Cotton", "Maize"],
+    "Nizamabad": ["Rice", "Soybean", "Cotton"],
+    "Khammam": ["Rice", "Cotton", "Chili"],
+    "Nalgonda": ["Rice", "Cotton", "Sugarcane"],
+    "Adilabad": ["Cotton", "Soybean", "Rice"]
+  },
+  "Uttar Pradesh": {
+    "Lucknow": ["Wheat", "Rice", "Sugarcane", "Mustard"],
+    "Kanpur": ["Wheat", "Rice", "Potato"],
+    "Agra": ["Wheat", "Mustard", "Potato"],
+    "Varanasi": ["Wheat", "Rice", "Lentil"],
+    "Allahabad": ["Wheat", "Rice", "Chickpea", "Lentil"],
+    "Gorakhpur": ["Rice", "Wheat", "Sugarcane"],
+    "Meerut": ["Wheat", "Sugarcane", "Rice"],
+    "Muzaffarnagar": ["Wheat", "Sugarcane", "Rice"],
+    "Bareilly": ["Wheat", "Rice", "Sugarcane"],
+    "Kannauj": ["Wheat", "Rice", "Lentil"],
+    "Jhansi": ["Wheat", "Chickpea", "Lentil"]
+  },
+  "Uttarakhand": {
+    "Dehradun": ["Wheat", "Rice", "Maize"],
+    "Haridwar": ["Wheat", "Rice", "Sugarcane"],
+    "Nainital": ["Wheat", "Rice", "Potato"],
+    "Udham Singh Nagar": ["Wheat", "Rice", "Sugarcane"]
+  },
+  "West Bengal": {
+    "Hooghly": ["Rice", "Potato", "Jute"],
+    "Bardhaman": ["Rice", "Wheat", "Potato"],
+    "Murshidabad": ["Rice", "Jute", "Mustard"],
+    "Nadia": ["Rice", "Jute", "Potato"],
+    "Malda": ["Rice", "Maize", "Jute"],
+    "Birbhum": ["Rice", "Wheat", "Potato"],
+    "24 Parganas": ["Rice", "Jute", "Potato"],
+    "Darjeeling": ["Tea", "Rice", "Potato"]
+  },
+  "Goa": {
+    "North Goa": ["Rice", "Coconut", "Banana"],
+    "South Goa": ["Rice", "Coconut", "Banana"]
+  },
+  "Manipur": {
+    "Imphal West": ["Rice", "Maize"],
+    "Imphal East": ["Rice", "Potato"]
+  },
+  "Meghalaya": {
+    "East Khasi Hills": ["Rice", "Potato", "Maize"],
+    "West Garo Hills": ["Rice", "Maize"]
+  },
+  "Tripura": {
+    "West Tripura": ["Rice", "Jute", "Potato"],
+    "South Tripura": ["Rice", "Jute"]
+  },
+  "Sikkim": {
+    "East Sikkim": ["Rice", "Maize", "Potato"],
+    "West Sikkim": ["Maize", "Rice"]
+  },
+  "Jammu and Kashmir": {
+    "Jammu": ["Rice", "Wheat", "Maize"],
+    "Srinagar": ["Rice", "Wheat"],
+    "Anantnag": ["Rice", "Wheat", "Maize"],
+    "Baramulla": ["Rice", "Wheat", "Maize"]
+  }
+}

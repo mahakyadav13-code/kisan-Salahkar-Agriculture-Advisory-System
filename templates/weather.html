@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Weather Forecast — Kisan Salahkar{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero-crop-v2 hero-weather">
+    <div class="hero-bg-img" style="background-image:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1400&h=500&fit=crop');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="breadcrumb"><a href="/dashboard"><i class="fa-solid fa-house"></i> Home</a> <span class="sep">/</span> <span>Weather</span></div>
+        <div class="hero-crop-badge" style="background:linear-gradient(135deg,#3b82f6,#06b6d4);"><i class="fa-solid fa-cloud-sun"></i></div>
+        <h1><span data-i18n="weatherTitle">Weather Forecast</span></h1>
+        <p data-i18n="weatherSub">Check current weather &amp; 3-day forecast for your farming area</p>
+        <div class="hero-stats-row">
+            <span class="hero-stat"><i class="fa-solid fa-satellite-dish"></i> <span data-i18n="wthStatLive">Live Data</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-calendar-days"></i> <span data-i18n="wthStatForecast">3-Day Forecast</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-earth-asia"></i> <span data-i18n="wthStatAllIndia">All India</span></span>
+            <span class="hero-stat"><i class="fa-solid fa-microchip"></i> <span data-i18n="wthStatIoT">IoT Ready</span></span>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section">
+
+    <!-- Search -->
+    <div class="weather-search">
+        <form id="weatherForm" class="weather-search-form">
+            <div class="input-group">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" id="cityInput" data-i18n="phCity" placeholder="Enter city name (e.g. Lucknow)" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="weatherBtn">
+                <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="btnSearch">Search</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Loading -->
+    <div id="weatherLoading" class="loading-box" style="display:none;">
+        <div class="spinner"></div>
+        <p data-i18n="fetching">Fetching weather data…</p>
+    </div>
+
+    <!-- Current Weather -->
+    <div id="weatherResult" style="display:none;">
+        <div class="weather-current">
+            <div class="weather-main">
+                <div class="weather-icon" id="weatherIcon"><i class="fa-solid fa-sun"></i></div>
+                <div class="weather-temp">
+                    <h2 id="tempVal">--°C</h2>
+                    <p id="weatherDesc">--</p>
+                </div>
+            </div>
+            <div class="weather-details">
+                <div><i class="fa-solid fa-temperature-half"></i> <span data-i18n="feelsLike">Feels Like</span> <span id="feelsLike">--°C</span></div>
+                <div><i class="fa-solid fa-droplet"></i> <span data-i18n="humidityLabel">Humidity</span> <span id="humidityVal">--%</span></div>
+                <div><i class="fa-solid fa-wind"></i> <span data-i18n="windLabel">Wind</span> <span id="windVal">-- km/h</span></div>
+                <div><i class="fa-solid fa-eye"></i> <span data-i18n="visLabel">Visibility</span> <span id="visVal">-- km</span></div>
+                <div><i class="fa-solid fa-gauge-high"></i> <span data-i18n="pressureLabel">Pressure</span> <span id="pressureVal">-- mb</span></div>
+                <div><i class="fa-solid fa-sun"></i> <span data-i18n="uvLabel">UV Index</span> <span id="uvVal">--</span></div>
+            </div>
+        </div>
+
+        <!-- Forecast -->
+        <h2 class="section-title" data-i18n="forecastTitle">3-Day Forecast</h2>
+        <div class="forecast-grid" id="forecastGrid"></div>
+
+        <!-- Farming Impact Advisory (MY SUGGESTION) -->
+        <div id="farmingImpact" style="display:none; margin-top:1.5rem;">
+            <div class="section-heading">
+                <i class="fa-solid fa-tractor"></i>
+                <h3 data-i18n="wthFarmImpact">Farming Impact Advisory</h3>
+                <small data-i18n="wthBasedCond">Based on current conditions</small>
+            </div>
+            <div class="weather-impact" id="impactCards"></div>
+        </div>
+    </div>
+
+</section>
+
+<!-- Weather Tips (MY SUGGESTION) -->
+<section class="section" style="padding-top:0;">
+    <div class="info-banner info-banner-green">
+        <i class="fa-solid fa-cloud-sun-rain"></i>
+        <div><strong data-i18n="wthTipTitle">Weather-Based Farming Tips:</strong> <span data-i18n="wthTipDesc">Always check weather before irrigation. Avoid spraying pesticides if rain is expected within 4 hours. Schedule harvesting during dry spells for best grain quality.</span></div>
+    </div>
+    <div class="section-heading">
+        <i class="fa-solid fa-wheat-awn"></i>
+        <h3 data-i18n="wthSeasonGuide">Seasonal Weather Guide for Farmers</h3>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-cloud-rain"></i></div>
+            <h4 data-i18n="wthMonsoonTitle">Monsoon (Jun-Sep)</h4>
+            <p data-i18n="wthMonsoonDesc">Heavy rainfall ideal for Kharif crops. Ensure proper drainage, watch for waterlogging, and apply fertilizers before rain.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-snowflake"></i></div>
+            <h4 data-i18n="wthWinterTitle">Winter (Nov-Feb)</h4>
+            <p data-i18n="wthWinterDesc">Perfect for Rabi crops like wheat &amp; mustard. Protect crops from frost, irrigate in morning hours only.</p>
+        </div>
+        <div class="feature-card-v2">
+            <div class="fc-icon"><i class="fa-solid fa-sun"></i></div>
+            <h4 data-i18n="wthSummerTitle">Summer (Mar-May)</h4>
+            <p data-i18n="wthSummerDesc">High evaporation — use mulching to retain moisture. Best for Zaid crops like watermelon &amp; cucumber.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Farming Impact Advisory — auto-generates after weather loads
+const origShowWeather = window.showWeatherResult;
+function generateFarmingImpact(temp, humidity, wind, desc) {
+    const impact = document.getElementById('farmingImpact');
+    const cards = document.getElementById('impactCards');
+    if (!impact || !cards) return;
+    let html = '';
+    // Irrigation
+    if (humidity < 40) html += '<div class="weather-impact-card"><h5>💧 ' + t('wthIrrNeeded') + '</h5><p>' + t('wthIrrNeededDesc').replace('{h}', humidity) + '</p></div>';
+    else if (humidity > 80) html += '<div class="weather-impact-card"><h5>💧 ' + t('wthIrrSkip') + '</h5><p>' + t('wthIrrSkipDesc').replace('{h}', humidity) + '</p></div>';
+    // Temperature
+    if (temp > 38) html += '<div class="weather-impact-card"><h5>🌡️ ' + t('wthHeatAlert') + '</h5><p>' + t('wthHeatAlertDesc').replace('{t}', temp) + '</p></div>';
+    else if (temp < 8) html += '<div class="weather-impact-card"><h5>❄️ ' + t('wthFrostRisk') + '</h5><p>' + t('wthFrostRiskDesc').replace('{t}', temp) + '</p></div>';
+    // Wind
+    if (wind > 25) html += '<div class="weather-impact-card"><h5>💨 ' + t('wthWindWarn') + '</h5><p>' + t('wthWindWarnDesc').replace('{w}', wind) + '</p></div>';
+    // Rain
+    const d = (desc || '').toLowerCase();
+    if (d.includes('rain') || d.includes('drizzle')) html += '<div class="weather-impact-card"><h5>🌧️ ' + t('wthRainExp') + '</h5><p>' + t('wthRainExpDesc') + '</p></div>';
+    // Harvest
+    if (!d.includes('rain') && humidity < 60 && temp > 20 && temp < 38) html += '<div class="weather-impact-card"><h5>✅ ' + t('wthIdealHarvest') + '</h5><p>' + t('wthIdealHarvestDesc') + '</p></div>';
+    if (html) { cards.innerHTML = html; impact.style.display = 'block'; }
+}
+// Hook into weather result display
+const _checkFarming = setInterval(() => {
+    const t = document.getElementById('tempVal');
+    if (t && t.textContent && t.textContent !== '--°C') {
+        clearInterval(_checkFarming);
+        const temp = parseFloat(t.textContent);
+        const hum = parseFloat(document.getElementById('humidityVal')?.textContent || '0');
+        const wind = parseFloat(document.getElementById('windVal')?.textContent || '0');
+        const desc = document.getElementById('weatherDesc')?.textContent || '';
+        generateFarmingImpact(temp, hum, wind, desc);
+    }
+}, 500);
+setTimeout(() => clearInterval(_checkFarming), 30000);
+</script>
+{% endblock %}

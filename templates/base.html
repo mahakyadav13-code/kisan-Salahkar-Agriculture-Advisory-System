@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Kisan Salahkar{% endblock %}</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 64 64' fill='none'%3E%3Crect width='64' height='64' rx='14' fill='%2315803d'/%3E%3Cpath d='M32 12c0 0-4 8-4 16s4 20 4 20' stroke='%23fbbf24' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M28 28c-6-4-12-2-12-2s4 6 10 6' stroke='%2322c55e' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M36 24c6-4 12-2 12-2s-4 6-10 6' stroke='%2322c55e' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+    <meta name="theme-color" content="#15803d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font-Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- ───── Navbar ───── -->
+    <nav class="navbar" id="navbar">
+        <a href="{{ url_for('dashboard') }}" class="nav-brand">
+            <svg class="nav-brand-logo" width="36" height="36" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="14" fill="#15803d"/>
+                <path d="M32 12c0 0-4 8-4 16s4 20 4 20" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+                <path d="M28 28c-6-4-12-2-12-2s4 6 10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M36 24c6-4 12-2 12-2s-4 6-10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M30 20c-5-5-11-4-11-4s3 6 9 7" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <path d="M34 16c4-6 10-6 10-6s-2 7-8 8" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <circle cx="32" cy="11" r="2.5" fill="#fbbf24"/>
+                <circle cx="30" cy="13" r="1.5" fill="#fbbf24" opacity=".7"/>
+                <circle cx="34" cy="13" r="1.5" fill="#fbbf24" opacity=".7"/>
+            </svg>
+            <div class="nav-brand-text">
+                <span class="nav-brand-main" data-i18n="navBrand">Kisan Salahkar</span>
+                <span class="nav-brand-sub">किसान सलाहकार</span>
+            </div>
+        </a>
+
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            {% block nav %}
+            <a href="{{ url_for('dashboard') }}" class="nav-link-item"><i class="fa-solid fa-house"></i> <span data-i18n="navHome">Home</span></a>
+            <a href="{{ url_for('crop') }}" class="nav-link-item"><i class="fa-solid fa-seedling"></i> <span data-i18n="navCrop">Crop Advice</span></a>
+            <a href="{{ url_for('weather') }}" class="nav-link-item"><i class="fa-solid fa-cloud-sun"></i> <span data-i18n="navWeather">Weather</span></a>
+            <a href="{{ url_for('mandi') }}" class="nav-link-item"><i class="fa-solid fa-store"></i> <span data-i18n="navMandi">Mandi</span></a>
+            <a href="{{ url_for('marketplace') }}" class="nav-link-item"><i class="fa-solid fa-handshake"></i> <span data-i18n="navMarket">Marketplace</span></a>
+
+            <!-- More dropdown -->
+            <div class="nav-dropdown">
+                <button class="nav-link-item nav-dropdown-toggle" type="button">
+                    <i class="fa-solid fa-grid-2"></i> <span data-i18n="navMore">More</span> <i class="fa-solid fa-chevron-down nav-chev"></i>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a href="{{ url_for('disease') }}"><i class="fa-solid fa-virus"></i> <span data-i18n="navDisease">Disease Detection</span></a>
+                    <a href="{{ url_for('schemes') }}"><i class="fa-solid fa-landmark"></i> <span data-i18n="navSchemes">Govt Schemes</span></a>
+                    <a href="{{ url_for('soil') }}"><i class="fa-solid fa-flask-vial"></i> <span data-i18n="navSoil">Soil Test</span></a>
+                    <a href="{{ url_for('forum') }}"><i class="fa-solid fa-comments"></i> <span data-i18n="navForum">Forum</span></a>
+                    <a href="{{ url_for('alerts') }}"><i class="fa-solid fa-bell"></i> <span data-i18n="navAlerts">Alerts</span></a>
+                    <a href="{{ url_for('iot_dashboard') }}"><i class="fa-solid fa-microchip"></i> <span data-i18n="navIoT">IoT Sensors</span></a>
+                    <a href="{{ url_for('info') }}"><i class="fa-solid fa-book-open"></i> <span data-i18n="navInfo">Agri Info</span></a>
+                    <a href="{{ url_for('profile') }}"><i class="fa-solid fa-user-circle"></i> <span data-i18n="navProfile">Profile</span></a>
+                </div>
+            </div>
+
+            <a href="{{ url_for('profile') }}" class="nav-link-item"><i class="fa-solid fa-user-circle"></i> <span data-i18n="navProfile">Profile</span></a>
+
+            <!-- Notification Bell -->
+            <button class="nav-link-item notif-bell-btn" id="notifBellBtn" type="button" title="Notifications" aria-label="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+            </button>
+
+            <a href="{{ url_for('logout') }}" class="nav-link-item btn-nav-logout"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="navLogout">Logout</span></a>
+            {% endblock %}
+
+            <!-- Language Toggle -->
+            <button class="lang-toggle" title="Switch language">
+                <i class="fa-solid fa-language"></i>
+                <span class="lang-toggle-text">हिंदी</span>
+            </button>
+            <!-- Dark Mode Toggle -->
+            <button class="dark-toggle" id="darkToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon"></i>
+                <i class="fa-solid fa-sun"></i>
+            </button>
+            <!-- Global Search -->
+            <button class="search-trigger" id="searchTrigger" title="Search (Ctrl+K)" aria-label="Global search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ───── Toast container ───── -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- ───── Notification Panel (dropdown) ───── -->
+    <div class="notif-panel" id="notifPanel" style="display:none;">
+        <div class="notif-panel-header">
+            <h4><i class="fa-solid fa-bell"></i> Notifications</h4>
+            <button class="notif-mark-all" id="notifMarkAll" title="Mark all as read"><i class="fa-solid fa-check-double"></i> Mark all read</button>
+        </div>
+        <div class="notif-panel-list" id="notifList">
+            <div class="notif-empty"><i class="fa-solid fa-bell-slash"></i><p>No notifications yet</p></div>
+        </div>
+    </div>
+    <div class="notif-overlay" id="notifOverlay" style="display:none;"></div>
+
+    <!-- ───── Page content ───── -->
+    {% block content %}{% endblock %}
+
+    <!-- ───── Footer ───── -->
+    <footer class="footer">
+        <div class="footer-main">
+            <div class="footer-brand">
+                <h3>
+                    <svg class="footer-brand-logo" width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="64" height="64" rx="14" fill="#15803d"/>
+                        <path d="M32 12c0 0-4 8-4 16s4 20 4 20" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M28 28c-6-4-12-2-12-2s4 6 10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <path d="M36 24c6-4 12-2 12-2s-4 6-10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <path d="M30 20c-5-5-11-4-11-4s3 6 9 7" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <path d="M34 16c4-6 10-6 10-6s-2 7-8 8" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <circle cx="32" cy="11" r="2.5" fill="#fbbf24"/>
+                    </svg>
+                    <span data-i18n="navBrand">Kisan Salahkar</span>
+                </h3>
+                <p class="footer-brand-hindi">किसान सलाहकार — स्मार्ट कृषि सलाह मंच</p>
+                <p data-i18n="footerDesc">AI-powered Smart Agriculture Advisory Platform empowering Indian farmers with real-time crop recommendations, weather alerts, mandi prices, and expert guidance in Hindi &amp; English.</p>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footerQuickLinks">Quick Links</h4>
+                <a href="{{ url_for('crop') }}"><i class="fa-solid fa-seedling"></i> Crop Advice</a>
+                <a href="{{ url_for('weather') }}"><i class="fa-solid fa-cloud-sun"></i> Weather</a>
+                <a href="{{ url_for('mandi') }}"><i class="fa-solid fa-store"></i> Mandi Prices</a>
+                <a href="{{ url_for('schemes') }}"><i class="fa-solid fa-landmark"></i> Schemes</a>
+                <a href="{{ url_for('forum') }}"><i class="fa-solid fa-comments"></i> Forum</a>
+            </div>
+            <div class="footer-dev">
+                <h4 data-i18n="footerDeveloper">Developer</h4>
+                <div class="dev-card">
+                    <div class="dev-card-avatar">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div class="dev-card-info">
+                        <p class="dev-card-name">Mahak Yadav</p>
+                        <p class="dev-card-role"><i class="fa-solid fa-graduation-cap"></i> B.Tech CS — IILM University '27</p>
+                        <div class="dev-card-links">
+                            <a href="tel:8882147499" title="Phone"><i class="fa-solid fa-phone"></i></a>
+                            <a href="mailto:mahak.yadav.cs27@iilm.edu" title="Email"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-inner">
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 64 64" style="vertical-align:middle; margin-right:.3rem;">
+                        <rect width="64" height="64" rx="14" fill="#15803d"/>
+                        <path d="M32 12c0 0-4 8-4 16s4 20 4 20" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M28 28c-6-4-12-2-12-2s4 6 10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                        <path d="M36 24c6-4 12-2 12-2s-4 6-10 6" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    </svg>
+                    Kisan Salahkar &copy; 2025
+                </span>
+                <span>Built with <i class="fa-solid fa-heart"></i> by <strong>Mahak Yadav</strong> for Indian Farmers <span class="app-version-badge-sm">v1.0</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ───── Bottom Navigation (mobile) ───── -->
+    <nav class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-inner">
+            <a href="{{ url_for('dashboard') }}" class="bottom-nav-item"><i class="fa-solid fa-house"></i><span data-i18n="navHome">Home</span></a>
+            <a href="{{ url_for('crop') }}" class="bottom-nav-item"><i class="fa-solid fa-seedling"></i><span data-i18n="navCrop">Crop</span></a>
+            <a href="{{ url_for('weather') }}" class="bottom-nav-item"><i class="fa-solid fa-cloud-sun"></i><span data-i18n="navWeather">Weather</span></a>
+            <a href="{{ url_for('mandi') }}" class="bottom-nav-item"><i class="fa-solid fa-store"></i><span data-i18n="navMandi">Mandi</span></a>
+            <a href="{{ url_for('profile') }}" class="bottom-nav-item"><i class="fa-solid fa-user-circle"></i><span data-i18n="navProfile">Profile</span></a>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p id="loadingMsg">Loading…</p>
+        </div>
+    </div>
+
+    <!-- PWA Service Worker -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+    </script>
+    <!-- User defaults for auto-fill -->
+    <script>
+    window.USER_DEFAULTS = {
+        location: "{{ session.get('user', {}).get('location', '') }}",
+        state: "{{ session.get('user', {}).get('state', '') }}",
+        district: "{{ session.get('user', {}).get('district', '') }}",
+        village: "{{ session.get('user', {}).get('village', '') }}",
+        name: "{{ session.get('user', {}).get('name', '') }}"
+    };
+    </script>
+    <!-- ───── Global Search Modal ───── -->
+    <div class="search-modal-overlay" id="searchOverlay">
+        <div class="search-modal">
+            <div class="search-modal-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="search-modal-input" id="searchInput" placeholder="Search crops, schemes, pages, forum…" autocomplete="off" maxlength="100">
+                <span class="search-modal-kbd">ESC</span>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+            <div class="search-footer">
+                <span><kbd>↑↓</kbd> Navigate</span>
+                <span><kbd>↵</kbd> Open</span>
+                <span><kbd>Esc</kbd> Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- i18n must load before main.js -->
+    <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/voice-advisor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
